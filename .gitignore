@@ -11,3 +11,5 @@ src/design/tokens/semantic.tokens.ts
 src/design/presets/lfx.preset.ts
 src/design/presets/index.ts
 src/index.ts
+
+.github/.DS_Store
