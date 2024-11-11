@@ -1,0 +1,16 @@
+{
+  "name": "lfx-ui-core",
+  "version": "1.0.3",
+  "description": "PrimeNG v18 theme configurations and design tokens",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "typescript": "~5.4.0",
+    "@types/node": "^20.0.0"
+  }
+}
