@@ -4,9 +4,10 @@
 **/coverage
 **/storybook-static
 
-src/tokens/component.tokens.ts
-src/tokens/primitive.tokens.ts
-src/tokens/semantic.tokens.ts
+src/design/tokens/component.tokens.ts
+src/design/tokens/primitive.tokens.ts
+src/design/tokens/semantic.tokens.ts
 
-src/presets/lfx.preset.ts
-src/presets/index.ts
+src/design/presets/lfx.preset.ts
+src/design/presets/index.ts
+src/index.ts

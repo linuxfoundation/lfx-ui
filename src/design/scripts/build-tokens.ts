@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 interface TokenValue {
   value: any;
@@ -91,6 +91,11 @@ function generatePresetsIndex(): string {
 `;
 }
 
+function generateIndex(): string {
+  return `export * from './design/presets';
+`;
+}
+
 async function buildTokens() {
   try {
     // Read tokens.json
@@ -100,6 +105,7 @@ async function buildTokens() {
     // Generate token files
     const outputDir = path.resolve(__dirname, "../tokens");
     const presetsDir = path.resolve(__dirname, "../presets");
+    const mainDir = path.resolve(__dirname, "../..");
 
     // Ensure presets directory exists
     if (!fs.existsSync(presetsDir)) {
@@ -114,6 +120,9 @@ async function buildTokens() {
     // Write preset files
     fs.writeFileSync(path.join(presetsDir, "lfx.preset.ts"), generateLFXPreset());
     fs.writeFileSync(path.join(presetsDir, "index.ts"), generatePresetsIndex());
+
+    // Write index file
+    fs.writeFileSync(path.join(mainDir, "index.ts"), generateIndex());
 
     console.log("Token and preset files generated successfully!");
   } catch (error) {

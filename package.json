@@ -1,11 +1,11 @@
 {
-  "name": "lfx-ui-core",
+  "name": "@linuxfoundation/lfx-ui-core",
   "version": "1.0.6",
   "description": "PrimeNG v18 theme configurations and design tokens",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build:tokens": "ts-node src/scripts/build-tokens.ts",
+    "build:tokens": "ts-node src/design/scripts/build-tokens.ts",
     "build": "npm run build:tokens && tsc",
     "prepare": "npm run build"
   },
