@@ -1,6 +1,6 @@
 {
   "name": "@linuxfoundation/lfx-ui-core",
-  "version": "1.0.6",
+  "version": "0.0.0",
   "description": "PrimeNG v18 theme configurations and design tokens",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,5 +18,8 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
