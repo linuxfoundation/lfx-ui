@@ -1,19 +1,24 @@
 {
   "name": "@linuxfoundation/lfx-ui-core",
   "version": "0.0.0",
-  "description": "PrimeNG v18 theme configurations and design tokens",
+  "description": "LFX UI Core Configurations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build:tokens": "ts-node src/design/scripts/build-tokens.ts",
-    "build": "npm run build:tokens && tsc",
-    "prepare": "npm run build"
+    "build:tokens": "ts-node src/scripts/build.ts",
+    "build": "npm run build:tokens && npm run format && tsc",
+    "prepare": "npm run build",
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\""
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "prettier": ">=3.0.0"
+  },
   "devDependencies": {
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "prettier": "^3.0.0",
+    "@types/prettier": "^3.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
