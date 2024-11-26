@@ -45,8 +45,7 @@ function generatePrimitiveTokens(tokens: TokenGroup): string {
   return `${generateTokenImports()}
 export const primitiveTokens = ${generateTokenObject(primitiveTokens as TokenGroup)} as const;
 
-export type PrimitiveTokens = typeof primitiveTokens;
-`;
+export type PrimitiveTokens = typeof primitiveTokens;`;
 }
 
 function generateSemanticTokens(tokens: TokenGroup): string {
@@ -56,8 +55,7 @@ import { primitiveTokens } from './primitive.tokens';
 
 export const semanticTokens = ${generateTokenObject(semanticTokens as TokenGroup)} as const;
 
-export type SemanticTokens = typeof semanticTokens;
-`;
+export type SemanticTokens = typeof semanticTokens;`;
 }
 
 function generateComponentTokens(tokens: TokenGroup): string {
@@ -67,8 +65,7 @@ import { semanticTokens } from './semantic.tokens';
 
 export const componentTokens = ${generateTokenObject(componentTokens as TokenGroup)} as const;
 
-export type ComponentTokens = typeof componentTokens;
-`;
+export type ComponentTokens = typeof componentTokens;`;
 }
 
 function generateLFXPreset(): string {
@@ -82,19 +79,17 @@ export const lfxPreset = {
   semantic: semanticTokens,
 } as const;
 
-export type LFXPreset = typeof lfxPreset;
-`;
+export type LFXPreset = typeof lfxPreset;`;
 }
 
 function generatePresetsIndex(): string {
-  return `export * from './lfx.preset';
-`;
+  return `export * from './lfx.preset';`;
 }
 
 function generateIndex(): string {
   return `export * from './design/presets';
 export * from './core/prettier-config';
-`;
+export * from './components';`;
 }
 
 async function buildTokens() {
