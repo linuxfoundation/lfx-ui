@@ -38,7 +38,6 @@ export const style = `
 .footer-links {
   display: flex;
   gap: 1rem;
-  color: #808b91
   font-size: 0.75rem;
 }
 
