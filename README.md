@@ -20,6 +20,11 @@ The generated tokens are organized into three layers:
 npm install @linuxfoundation/lfx-ui-core
 ```
 
+## Components
+
+- [Design Tokens](docs/design-tokens.md)
+- [Footer Component](docs/footer.md)
+
 ## Contributing
 
 ### Prerequisites
@@ -78,8 +83,3 @@ git push origin v1.0.0
 - Update documentation when adding new token categories
 - Add comments to explain complex token relationships
 - Test tokens in a real application before releasing
-
-## Components
-
-[Design Tokens](docs/design-tokens.md)
-[Footer Component](docs/footer.md)
