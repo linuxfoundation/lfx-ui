@@ -1,4 +1,6 @@
-// First, define specific token types
+// Copyright The Linux Foundation and each contributor to LFX.
+// SPDX-License-Identifier: MIT
+
 type BaseToken<T> = {
   value: T;
   type: string;
