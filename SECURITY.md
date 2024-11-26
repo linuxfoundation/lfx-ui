@@ -5,7 +5,7 @@
 The following versions of the LFX UI components are supported.
 
 | Version | Supported          |
-|---------|--------------------|
+| ------- | ------------------ |
 | 1.0.x   | :white_check_mark: |
 
 ## Reporting a Security Vulnerability
