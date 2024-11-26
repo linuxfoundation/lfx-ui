@@ -34,10 +34,8 @@ export class LFXFooter extends HTMLElement {
           </div>
           <div class="copyright-container">
             <p class="copyright">Copyright &copy; ${new Date().getFullYear()} The Linux Foundation&reg;. All rights reserved.
-            The Linux Foundation has registered trademarks and uses trademarks.</p>
-            <p class="copyright">For more information, including terms of use, privacy policy,
-            and trademark usage, please see our <a href="https://www.linuxfoundation.org/legal/policies">Policies</a> page.
-            </p>
+            The Linux Foundation has registered trademarks and uses trademarks. For more information, including terms of use, privacy policy,
+            and trademark usage, please see our <a href="https://www.linuxfoundation.org/legal/policies">Policies</a> page.</p>
           </div>
         </div>
       </div>
