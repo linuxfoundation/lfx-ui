@@ -1,6 +1,6 @@
 # LFX UI Core
 
-A package that contains core functionality for LFX UI products. It includes design tokens and PrimeTek theme configuration that is shared across LFX UI products.
+A package that contains core functionality for LFX UI products. It includes design tokens and PrimeOne theme configuration that is shared across LFX UI products.
 
 ## Overview
 
@@ -32,13 +32,13 @@ import { Aura } from 'primeng/themes/aura';
 import { lfxPreset } from '@linuxfoundation/lfx-ui-core';
 
 const customPreset = definePreset(Aura, {
-  primitive: lfxPreset.primitive,
+  primitive: lfxPreset.primitive
 });
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   constructor(private config: PrimeNGConfig) {
@@ -46,8 +46,8 @@ export class AppComponent {
       preset: customPreset,
       options: {
         prefix: 'p',
-        darkModeSelector: '.dark-mode',
-      },
+        darkModeSelector: '.dark-mode'
+      }
     });
   }
 }
@@ -113,6 +113,25 @@ git push origin v1.0.0
 - Update documentation when adding new token categories
 - Add comments to explain complex token relationships
 - Test tokens in a real application before releasing
+
+## Components
+
+### Footer Component
+
+The package includes a customizable footer web component that can be used in any web application.
+
+#### Usage
+
+```html
+<!-- In your HTML file -->
+<lfx-footer></lfx-footer>
+```
+
+```typescript
+// In your TypeScript/JavaScript file
+// For Angular, import it in your main module
+import '@linuxfoundation/lfx-ui-core';
+```
 
 ## License
 
