@@ -81,5 +81,5 @@ git push origin v1.0.0
 
 ## Components
 
-[Design Tokens](src/docs/design-tokens.md)
-[Footer Component](src/docs/footer.md)
+[Design Tokens](docs/design-tokens.md)
+[Footer Component](docs/footer.md)
