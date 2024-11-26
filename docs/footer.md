@@ -49,3 +49,14 @@ Then, use the component in your HTML:
 ```
 
 Example: [https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html](https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html)
+
+# Development
+
+To develop the component, run the following commands:
+
+```bash
+npm run build
+npm run storybook
+```
+
+This will build the component and start the storybook server. You can then navigate to [http://localhost:6006](http://localhost:6006) to view the component. Updates made to the component will be reflected live in the storybook environment.
