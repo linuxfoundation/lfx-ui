@@ -20,41 +20,6 @@ The generated tokens are organized into three layers:
 npm install @linuxfoundation/lfx-ui-core
 ```
 
-## Usage
-
-After installing the package, you can import and use the tokens in your application:
-
-```typescript
-import { Component } from '@angular/core';
-import { PrimeNGConfig } from 'primeng/api';
-import { definePreset } from 'primeng/themes';
-import { Aura } from 'primeng/themes/aura';
-import { lfxPreset } from '@linuxfoundation/lfx-ui-core';
-
-const customPreset = definePreset(Aura, {
-  primitive: lfxPreset.primitive
-});
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-export class AppComponent {
-  constructor(private config: PrimeNGConfig) {
-    this.config.theme.set({
-      preset: customPreset,
-      options: {
-        prefix: 'p',
-        darkModeSelector: '.dark-mode'
-      }
-    });
-  }
-}
-```
-
-The tokens are strongly typed, providing autocomplete support and type safety in your IDE.
-
 ## Contributing
 
 ### Prerequisites
@@ -77,7 +42,7 @@ cd lfx-ui-core
 npm ci
 ```
 
-3. Build the tokens:
+3. Build the tokens and components:
 
 ```bash
 npm run build
@@ -116,28 +81,5 @@ git push origin v1.0.0
 
 ## Components
 
-### Footer Component
-
-The package includes a customizable footer web component that can be used in any web application.
-
-#### Usage
-
-```html
-<!-- In your HTML file -->
-<lfx-footer></lfx-footer>
-```
-
-```typescript
-// In your TypeScript/JavaScript file
-// For Angular, import it in your main module
-import '@linuxfoundation/lfx-ui-core';
-```
-
-## License
-
-Copyright The Linux Foundation and each contributor to LFX.
-
-This project’s source code is licensed under the MIT License. A copy of the license is available in LICENSE.
-
-This project’s documentation is licensed under the Creative Commons Attribution 4.0 International License \(CC-BY-4.0\).
-A copy of the license is available in LICENSE-docs.
+[Design Tokens](docs/design-tokens.md)
+[Footer Component](docs/footer.md)
