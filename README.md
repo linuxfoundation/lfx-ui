@@ -20,7 +20,7 @@ The generated tokens are organized into three layers:
 npm install @linuxfoundation/lfx-ui-core
 ```
 
-## Components
+## Documentation
 
 - [Design Tokens](docs/design-tokens.md)
 - [Footer Component](docs/footer.md)

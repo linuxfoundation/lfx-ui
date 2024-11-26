@@ -1,6 +1,18 @@
 // Copyright The Linux Foundation and each contributor to LFX.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @element lfx-footer
+ * @summary A footer component for LFX applications
+ * @description This component provides a consistent footer across LFX applications
+ * @csspart footer-container - The main container of the footer
+ * @csspart footer-content - The content wrapper of the footer
+ * @csspart footer-links - The container for footer links
+ * @csspart copyright-container - The container for copyright information
+ *
+ * @cssproperty --lfx-footer-bg - Background color of the footer
+ * @cssproperty --lfx-footer-text - Text color of the footer
+ */
 export class LFXFooter extends HTMLElement {
   constructor() {
     super();
@@ -10,6 +22,8 @@ export class LFXFooter extends HTMLElement {
   private getTemplate(): string {
     return `
       <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
         :host {
           display: block;
           background: var(--lfx-footer-bg, transparent);
