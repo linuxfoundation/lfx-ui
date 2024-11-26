@@ -1,6 +1,6 @@
 {
   "name": "@linuxfoundation/lfx-ui-core",
-  "version": "0.0.5-beta.7",
+  "version": "0.0.0",
   "description": "LFX UI Core Configurations and Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
