@@ -27,15 +27,10 @@ export class LFXFooter extends HTMLElement {
 
       <div class="footer-container">
         <div class="footer-content">
-          <div class="footer-links">
-            <a href="https://www.linuxfoundation.org/legal/privacy-policy?hsLang=en">Privacy Policy</a>
-            <span>|</span>
-            <a href="https://www.linuxfoundation.org/legal/trademark-usage?hsLang=en">Trademark Usage</a>
-          </div>
           <div class="copyright-container">
             <p class="copyright">Copyright &copy; ${new Date().getFullYear()} The Linux Foundation&reg;. All rights reserved.
-            The Linux Foundation has registered trademarks and uses trademarks. For more information, including terms of use, privacy policy,
-            and trademark usage, please see our <a href="https://www.linuxfoundation.org/legal/policies">Policies</a> page.</p>
+            The Linux Foundation has registered trademarks and uses trademarks. For more information, including terms of use, <a href="https://www.linuxfoundation.org/legal/privacy-policy?hsLang=en">Privacy Policy</a>,
+            and <a href="https://www.linuxfoundation.org/legal/trademark-usage?hsLang=en">Trademark Usage</a>, please see our <a href="https://www.linuxfoundation.org/legal/policies">Policies</a> page.</p>
           </div>
         </div>
       </div>
