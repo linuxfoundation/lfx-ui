@@ -40,8 +40,16 @@ export const style = `
 
 .footer-links {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.75rem;
+}
+
+.footer-links span {
+  color: #c5cacc;
+  font-size: 0.6rem;
+  font-weight: 100;
+  margin-top: -0.125rem;
 }
 
 .footer-links a {
