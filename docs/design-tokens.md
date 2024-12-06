@@ -14,13 +14,13 @@ import { Aura } from 'primeng/themes/aura';
 import { lfxPreset } from '@linuxfoundation/lfx-ui-core';
 
 const customPreset = definePreset(Aura, {
-  primitive: lfxPreset.primitive
+  primitive: lfxPreset.primitive,
 });
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   constructor(private config: PrimeNGConfig) {
@@ -28,8 +28,8 @@ export class AppComponent {
       preset: customPreset,
       options: {
         prefix: 'p',
-        darkModeSelector: '.dark-mode'
-      }
+        darkModeSelector: '.dark-mode',
+      },
     });
   }
 }
@@ -43,14 +43,14 @@ import { Aura } from 'primeng/themes/aura';
 import { lfxPreset } from '@linuxfoundation/lfx-ui-core';
 
 const MyPreset = definePreset(Aura, {
-  primitive: lfxPreset.primitive
+  primitive: lfxPreset.primitive,
 });
 
 const app = createApp(App);
 
 app.use(PrimeVue, {
   theme: {
-    preset: MyPreset
-  }
+    preset: MyPreset,
+  },
 });
 ```

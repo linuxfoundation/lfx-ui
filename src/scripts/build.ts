@@ -91,7 +91,6 @@ function generatePresetsIndex(): string {
 
 function generateIndex(): string {
   return `export * from './design/presets';
-export * from './core/prettier-config';
 export * from './components';`;
 }
 

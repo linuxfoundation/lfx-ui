@@ -48,5 +48,19 @@
     "dist",
     "dist/browser",
     "README.md"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./components": {
+      "import": "./dist/components/index.js",
+      "require": "./dist/components/index.js"
+    },
+    "./prettier-config": {
+      "import": "./dist/core/prettier-config/index.js",
+      "require": "./dist/core/prettier-config/index.js"
+    }
+  }
 }
