@@ -6,6 +6,15 @@
   "semi": true,
   "bracketSpacing": true,
   "arrowParens": "always",
-  "trailingComma": "none",
-  "bracketSameLine": true
+  "trailingComma": "es5",
+  "bracketSameLine": true,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
 }

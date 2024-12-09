@@ -9,9 +9,9 @@ const meta: Meta = {
   title: 'Components/Footer',
   component: 'lfx-footer',
   parameters: {
-    layout: 'fullscreen'
+    layout: 'fullscreen',
   },
-  render: () => html`<lfx-footer></lfx-footer>`
+  render: () => html`<lfx-footer></lfx-footer>`,
 };
 
 export default meta;
