@@ -15,7 +15,7 @@ export const style = css`
     display: block;
     background: var(--lfx-footer-bg, transparent);
     padding: 3rem 2rem 0 2rem;
-    color: var(--lfx-footer-text, #5b6367);
+    color: var(--lfx-footer-text, #808b91);
     font-family: 'Open Sans', sans-serif;
   }
 
@@ -24,7 +24,7 @@ export const style = css`
     padding: 0;
     box-sizing: border-box;
     font-size: 0.75rem;
-    color: #808b91;
+    color: var(--lfx-footer-text, #808b91);
     text-decoration: none;
   }
 
@@ -55,11 +55,11 @@ export const style = css`
   }
 
   .copyright a {
-    color: #5b6367;
+    color: var(--lfx-footer-text, #5b6367);
   }
 
   .copyright a:hover {
     text-decoration: underline;
-    color: #5b6367;
+    color: var(--lfx-footer-text, #5b6367);
   }
 `;
