@@ -10,7 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "rootDir": "./src",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,  },
+    "emitDecoratorMetadata": false
+  },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
