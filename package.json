@@ -8,7 +8,7 @@
   "author": "The Linux Foundation",
   "scripts": {
     "build:tokens": "ts-node src/scripts/build.ts",
-    "build:browser": "browserify src/components/footer/footer.component.ts -p [ tsify ] -o dist/browser/footer.bundle.js",
+    "build:browser": "ts-node src/scripts/build-components.ts",
     "build": "npm run build:tokens && npm run format && tsc && npm run build:browser",
     "prepare": "npm run build",
     "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
@@ -25,6 +25,7 @@
     "@storybook/blocks": "^8.4.5",
     "@storybook/web-components": "^8.4.5",
     "@storybook/web-components-vite": "^8.4.5",
+    "@types/browserify": "^12.0.40",
     "@types/node": "^20.0.0",
     "@types/prettier": "3.0.0",
     "browserify": "^17.0.0",
