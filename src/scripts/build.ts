@@ -75,9 +75,9 @@ function generateLFXPreset(): string {
   return `import { componentTokens } from '../tokens/component.tokens';
 import { primitiveTokens } from '../tokens/primitive.tokens';
 import { semanticTokens } from '../tokens/semantic.tokens';
-
+import { lfxComponentTokens } from '../tokens/lfx.component.tokens';
 export const lfxPreset = {
-  component: componentTokens,
+  component: { ...componentTokens, ...lfxComponentTokens },
   primitive: primitiveTokens,
   semantic: semanticTokens,
 } as const;
