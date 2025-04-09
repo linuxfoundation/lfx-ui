@@ -62,5 +62,6 @@
       "import": "./dist/core/prettier-config/index.js",
       "require": "./dist/core/prettier-config/index.js"
     }
-  }
+  },
+  "packageManager": "yarn@4.9.0"
 }
