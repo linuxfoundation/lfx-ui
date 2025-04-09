@@ -14,5 +14,4 @@ on:
 
 jobs:
   pr-title-lint:
-    name: PR Title Lint
     uses: ./.github/workflows/_pr-title-lint.yml
