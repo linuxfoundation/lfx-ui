@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 name: PR Title Lint
+
 on:
   pull_request:
     # By default, a workflow only runs when a pull_request's activity type is opened, synchronize, or reopened. We
@@ -13,4 +14,4 @@ on:
 
 jobs:
   pr-title-lint:
-    uses: ../../github_workflows/pr-title-lint.yml@v0
+    uses: ./github_workflows/_pr-title-lint.yml
