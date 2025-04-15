@@ -2,7 +2,7 @@
 # Copyright The Linux Foundation and each contributor to LFX.
 # SPDX-License-Identifier: MIT
 
-name: PR Title Lint
+name: Pull Request
 
 on:
   pull_request:
@@ -15,3 +15,6 @@ on:
 jobs:
   pr-title-lint:
     uses: ./.github/workflows/_pr-title-lint.yml
+
+  add-label:
+    uses: ./.github/workflows/_add-label.yml
