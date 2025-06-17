@@ -1,0 +1,108 @@
+---
+description: Storybook story creation and documentation standards for LFX UI Core
+globs: ["**/*.stories.ts", "**/*.stories.js", "**/*.mdx"]
+alwaysApply: false
+---
+
+# Storybook Standards for LFX UI Core
+
+## Story File Structure
+Each component should have a corresponding `.stories.ts` file with:
+
+1. Default export with component metadata
+2. Template function for reusable story logic
+3. Primary story showing default state
+4. Variant stories for different configurations
+5. Interactive stories for testing different props
+
+## Story Naming Conventions
+- Story files: `ComponentName.stories.ts`
+- Story names: Descriptive and clear (e.g., `Primary`, `WithCustomData`, `DarkTheme`)
+- Use PascalCase for story names
+- Group related stories with prefixes when needed
+
+## Documentation Requirements
+- Include component description in default export
+- Document all props with controls
+- Provide usage examples in the docs
+- Include accessibility notes where relevant
+
+## Example Story Structure
+```typescript
+// Copyright The Linux Foundation and each contributor to LFX.
+// SPDX-License-Identifier: MIT
+
+import { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import './footer.component';
+
+const meta: Meta = {
+  title: 'Components/Footer',
+  component: 'lfx-footer',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'A footer component that displays copyright and legal information for LFX applications.',
+      },
+    },
+  },
+  // For vanilla web components, use simple render function
+  render: () => html`<lfx-footer></lfx-footer>`,
+};
+
+export default meta;
+type Story = StoryObj;
+
+// Basic story - most vanilla web components are simple
+export const Default: Story = {};
+
+// If component accepts attributes/properties, show variations
+export const WithCustomStyling: Story = {
+  render: () => html`
+    <lfx-footer
+      style="--lfx-footer-bg: #f0f0f0; --lfx-footer-text: #333;"
+    ></lfx-footer>
+  `,
+};
+
+// For components with slots
+export const WithCustomContent: Story = {
+  render: () => html`
+    <lfx-button>
+      <span>Custom Button Text</span>
+    </lfx-button>
+  `,
+};
+```
+
+## Controls Configuration
+- Use appropriate control types (select, boolean, text, object, etc.)
+- Provide meaningful descriptions for each control
+- Set reasonable default values
+- Group related controls when using many props
+
+## Documentation Best Practices
+- Include component description in meta
+- Add individual story descriptions when needed
+- Use MDX for complex documentation needs
+- Include code examples showing actual usage
+- Document any required CSS custom properties
+
+## Accessibility Stories
+Create dedicated stories for accessibility testing:
+- High contrast themes
+- Large text sizes
+- Keyboard navigation scenarios
+- Screen reader optimized variants
+
+## Testing Stories
+- Include edge cases (empty data, missing props)
+- Test error states and loading states
+- Create interactive stories for user testing
+- Use play functions for automated interactions
+
+## Design Token Integration
+- Show how components use design tokens
+- Create stories demonstrating token customization
+- Include examples of CSS custom property overrides

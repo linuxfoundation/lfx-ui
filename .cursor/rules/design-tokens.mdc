@@ -1,0 +1,82 @@
+---
+description: Design token standards and usage patterns for LFX UI Core
+globs: ["src/design/**/*", "src/scripts/**/*"]
+alwaysApply: false
+---
+
+# Design Token Standards for LFX UI Core
+
+## Token Architecture
+LFX UI Core uses a three-layer token system:
+
+1. **Primitive Tokens**: Base values (colors, spacing, typography)
+2. **Semantic Tokens**: Purpose-driven tokens that reference primitives
+3. **Component Tokens**: Component-specific tokens that reference semantic tokens
+
+## Naming Conventions
+- Use kebab-case for all token names
+- Follow the pattern: `[category]-[property]-[variant?]-[state?]`
+- Be descriptive but concise: `color-text-primary`, `spacing-component-padding-small`
+
+## Token Categories
+- `color-*`: All color values (background, text, border, etc.)
+- `spacing-*`: Margins, padding, gaps
+- `typography-*`: Font sizes, weights, line heights
+- `border-*`: Border widths, radii
+- `shadow-*`: Box shadows and elevations
+- `animation-*`: Timing functions, durations
+
+## Layer Guidelines
+
+### Primitive Tokens
+- Reference only raw values (hex colors, px values, etc.)
+- No references to other tokens
+- Examples: `color-blue-500: #3b82f6`, `spacing-base-unit: 4px`
+
+### Semantic Tokens
+- Reference primitive tokens using `{primitive.token.name}`
+- Define purpose, not appearance
+- Examples: `color-text-primary: {color.gray.900}`, `spacing-content-padding: {spacing.base.unit * 4}`
+
+### Component Tokens
+- Reference semantic tokens when possible
+- Component-specific overrides only when necessary
+- Examples: `button-padding-y: {spacing.component.padding.small}`
+
+## File Organization
+- Keep token definitions in `src/design/tokens/`
+- Use separate files for each category when tokens grow large
+- Build scripts should generate platform-specific outputs
+
+## Usage in Components
+```typescript
+// ✅ Good: Use semantic tokens
+const styles = css`
+  color: var(--color-text-primary);
+  padding: var(--spacing-component-padding);
+`;
+
+// ❌ Avoid: Direct primitive values
+const styles = css`
+  color: #374151;
+  padding: 16px;
+`;
+```
+
+## Token Definition Examples
+```json
+{
+  "color": {
+    "primitive": {
+      "blue": {
+        "500": { "value": "#3b82f6" }
+      }
+    },
+    "semantic": {
+      "text": {
+        "primary": { "value": "{color.primitive.gray.900}" }
+      }
+    }
+  }
+}
+```
