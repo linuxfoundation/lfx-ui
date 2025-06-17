@@ -49,13 +49,21 @@ export class StylesheetManager {
     const stylesheet = this.createStylesheet(css, cacheKey);
 
     if (stylesheet && 'adoptedStyleSheets' in shadowRoot) {
-      // Use modern adoptedStyleSheets
-      shadowRoot.adoptedStyleSheets = [stylesheet];
+      // Check if stylesheet is already applied to avoid duplicates
+      if (!shadowRoot.adoptedStyleSheets.includes(stylesheet)) {
+        shadowRoot.adoptedStyleSheets = [stylesheet];
+      }
     } else {
-      // Fallback: create style element
-      const styleElement = document.createElement('style');
-      styleElement.textContent = css;
-      shadowRoot.appendChild(styleElement);
+      // Fallback: create style element (check if already exists)
+      const existingStyle = shadowRoot.querySelector(`style[data-cache-key="${cacheKey || 'default'}"]`);
+      if (!existingStyle) {
+        const styleElement = document.createElement('style');
+        styleElement.textContent = css;
+        if (cacheKey) {
+          styleElement.setAttribute('data-cache-key', cacheKey);
+        }
+        shadowRoot.appendChild(styleElement);
+      }
     }
   }
 
@@ -69,12 +77,60 @@ export class StylesheetManager {
     const stylesheet = this.createStylesheet(css, cacheKey);
 
     if (stylesheet && 'adoptedStyleSheets' in shadowRoot) {
-      shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, stylesheet];
+      // Check if stylesheet is already in the array to prevent duplicates
+      if (!shadowRoot.adoptedStyleSheets.includes(stylesheet)) {
+        shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, stylesheet];
+      }
     } else {
-      // Fallback: create additional style element
-      const styleElement = document.createElement('style');
-      styleElement.textContent = css;
-      shadowRoot.appendChild(styleElement);
+      // Fallback: create additional style element (check if already exists)
+      const existingStyle = shadowRoot.querySelector(`style[data-cache-key="${cacheKey || 'default'}"]`);
+      if (!existingStyle) {
+        const styleElement = document.createElement('style');
+        styleElement.textContent = css;
+        if (cacheKey) {
+          styleElement.setAttribute('data-cache-key', cacheKey);
+        }
+        shadowRoot.appendChild(styleElement);
+      }
+    }
+  }
+
+  /**
+   * Removes a stylesheet from a shadow root
+   * @param shadowRoot - The shadow root to remove styles from
+   * @param css - CSS string content to remove
+   * @param cacheKey - Optional cache key
+   */
+  static removeStyles(shadowRoot: ShadowRoot, css: string, cacheKey?: string): void {
+    const stylesheet = this.createStylesheet(css, cacheKey);
+
+    if (stylesheet && 'adoptedStyleSheets' in shadowRoot) {
+      // Remove from adoptedStyleSheets array
+      shadowRoot.adoptedStyleSheets = shadowRoot.adoptedStyleSheets.filter((sheet) => sheet !== stylesheet);
+    } else {
+      // Fallback: remove style element
+      const existingStyle = shadowRoot.querySelector(`style[data-cache-key="${cacheKey || 'default'}"]`);
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+    }
+  }
+
+  /**
+   * Checks if a stylesheet is already applied to a shadow root
+   * @param shadowRoot - The shadow root to check
+   * @param css - CSS string content to check for
+   * @param cacheKey - Optional cache key
+   * @returns True if stylesheet is already applied
+   */
+  static hasStyles(shadowRoot: ShadowRoot, css: string, cacheKey?: string): boolean {
+    const stylesheet = this.createStylesheet(css, cacheKey);
+
+    if (stylesheet && 'adoptedStyleSheets' in shadowRoot) {
+      return shadowRoot.adoptedStyleSheets.includes(stylesheet);
+    } else {
+      const existingStyle = shadowRoot.querySelector(`style[data-cache-key="${cacheKey || 'default'}"]`);
+      return !!existingStyle;
     }
   }
 
@@ -130,5 +186,24 @@ export abstract class StyledComponent extends HTMLElement {
    */
   protected addStyles(css: string, cacheKey?: string): void {
     StylesheetManager.addStyles(this.shadowRoot, css, cacheKey);
+  }
+
+  /**
+   * Remove styles from the component
+   * @param css - CSS string content
+   * @param cacheKey - Optional cache key
+   */
+  protected removeStyles(css: string, cacheKey?: string): void {
+    StylesheetManager.removeStyles(this.shadowRoot, css, cacheKey);
+  }
+
+  /**
+   * Check if styles are already applied to the component
+   * @param css - CSS string content
+   * @param cacheKey - Optional cache key
+   * @returns True if styles are already applied
+   */
+  protected hasStyles(css: string, cacheKey?: string): boolean {
+    return StylesheetManager.hasStyles(this.shadowRoot, css, cacheKey);
   }
 }

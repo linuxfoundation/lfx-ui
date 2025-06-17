@@ -1,9 +1,4 @@
 ---
-description:
-globs:
-alwaysApply: false
----
----
 description: Build system and package management standards for LFX UI Core
 globs: ["package.json", "tsconfig.json", "src/scripts/**/*", "*.config.*"]
 alwaysApply: false

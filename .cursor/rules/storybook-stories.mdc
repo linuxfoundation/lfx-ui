@@ -1,9 +1,4 @@
 ---
-description:
-globs:
-alwaysApply: false
----
----
 description: Storybook story creation and documentation standards for LFX UI Core
 globs: ["**/*.stories.ts", "**/*.stories.js", "**/*.mdx"]
 alwaysApply: false

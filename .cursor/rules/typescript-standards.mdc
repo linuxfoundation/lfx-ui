@@ -1,9 +1,4 @@
 ---
-description:
-globs:
-alwaysApply: true
----
----
 description: TypeScript standards and best practices for LFX UI Core
 alwaysApply: true
 ---

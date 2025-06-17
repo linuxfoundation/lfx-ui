@@ -1,9 +1,4 @@
 ---
-description:
-globs:
-alwaysApply: false
----
----
 description: Vanilla web component development standards for LFX UI Core
 globs: ["src/components/**/*"]
 alwaysApply: false
