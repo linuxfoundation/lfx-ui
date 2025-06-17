@@ -1,0 +1,122 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: Build system and package management standards for LFX UI Core
+globs: ["package.json", "tsconfig.json", "src/scripts/**/*", "*.config.*"]
+alwaysApply: false
+---
+
+# Build System Standards for LFX UI Core
+
+## Package.json Standards
+- Use exact versions for dependencies when possible
+- Separate devDependencies from peerDependencies
+- Include all necessary build scripts
+- Configure proper exports for different module systems
+- Set appropriate package metadata (author, license, etc.)
+
+## Build Script Guidelines
+- `build:tokens`: Generate design tokens from source
+- `build:browser`: Create browser-compatible bundles
+- `build`: Full build including formatting and TypeScript compilation
+- `format`: Run Prettier on all source files
+- Scripts should be idempotent and handle failures gracefully
+
+## TypeScript Configuration
+- Target ES2020 for modern browser support
+- Enable strict mode for better type safety
+- Generate declaration files for TypeScript consumers
+- Configure proper rootDir and outDir
+- Include source maps for debugging
+
+## Distribution Strategy
+The package should support multiple consumption patterns:
+
+### NPM Package Structure
+```
+dist/
+├── index.js          # Main entry point
+├── index.d.ts        # TypeScript declarations
+├── components/       # Component exports
+├── browser/          # Browser bundles
+└── design/          # Generated tokens
+```
+
+### Export Configuration
+- Main entry: CommonJS for Node.js compatibility
+- Module entry: ES modules for bundlers
+- Browser field: Browser-optimized builds
+- Separate exports for components and configurations
+
+## Token Build Process
+1. Read source tokens from `src/design/tokens/`
+2. Transform using build scripts in `src/scripts/`
+3. Generate platform-specific outputs (CSS, JS, JSON)
+4. Output to `dist/design/` with proper file structure
+
+## Browser Bundle Guidelines
+- Use Browserify with TypeScript plugin (tsify)
+- Create separate bundles for each major component
+- Minify production bundles
+- Include source maps for development
+
+## Version Management
+- Follow semantic versioning (semver)
+- Use git tags for version releases
+- Automate version bumping in CI/CD
+- Update CHANGELOG.md with each release
+
+## File Inclusion
+Only include necessary files in the published package:
+- `dist/` directory with built assets
+- `README.md` for documentation
+- `LICENSE` for legal requirements
+- Exclude source files, tests, and development configs
+
+## Example Build Script Structure
+```typescript
+// src/scripts/build.ts
+import { buildTokens } from './token-builder';
+import { generateTypes } from './type-generator';
+
+async function build() {
+  try {
+    console.log('Building design tokens...');
+    await buildTokens();
+
+    console.log('Generating TypeScript types...');
+    await generateTypes();
+
+    console.log('Build completed successfully!');
+  } catch (error) {
+    console.error('Build failed:', error);
+    process.exit(1);
+  }
+}
+
+build();
+```
+
+## Quality Checks
+- Run Prettier formatting before build
+- Validate TypeScript compilation
+- Check for missing exports
+- Verify package.json structure
+- Test bundle integrity
+
+## Performance Considerations
+- Use tree-shaking friendly exports
+- Minimize bundle sizes
+- Avoid including unnecessary dependencies
+- Optimize token generation for large token sets
+
+## Publishing Workflow
+1. Run full build and tests
+2. Update version number
+3. Generate changelog
+4. Create git tag
+5. Publish to npm registry
+6. Update documentation

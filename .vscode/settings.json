@@ -20,5 +20,9 @@
   "editor.formatOnPaste": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.stylelint": "explicit"
-  }
+  },
+  "cSpell.words": [
+    "csspart",
+    "cssproperty"
+  ]
 }

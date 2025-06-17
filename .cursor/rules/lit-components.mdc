@@ -1,0 +1,176 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: Vanilla web component development standards for LFX UI Core
+globs: ["src/components/**/*"]
+alwaysApply: false
+---
+
+# Vanilla Web Component Standards for LFX UI Core
+
+## Component Structure
+All components should follow this structure:
+
+1. Copyright header with SPDX license identifier
+2. Style import from separate `.style.ts` file
+3. JSDoc comments with element documentation
+4. Component class extending HTMLElement
+5. Constructor with shadow DOM setup
+6. Private template method
+7. connectedCallback for rendering
+8. IIFE for component registration
+
+## Naming Conventions
+- Component class: PascalCase with LFX prefix (e.g., `LFXFooter`)
+- Custom element tag: kebab-case with `lfx-` prefix (e.g., `lfx-footer`)
+- CSS custom properties: kebab-case with `--lfx-` prefix
+- Private methods: underscore prefix (e.g., `_handleClick`)
+
+## Shadow DOM Setup
+- Always use `{ mode: 'open' }` for shadow DOM
+- Check for shadowRoot existence before manipulation
+- Use template strings for HTML structure
+
+## Style Architecture
+- Separate styles into `.style.ts` files
+- Export styles as template literal strings
+- Use CSS custom properties for themeable values
+- Include `:host` styles for component container
+- Reset margins/padding and set box-sizing in `:host *`
+
+## JSDoc Documentation
+Document components with:
+- `@element` - Custom element tag name
+- `@summary` - Brief description
+- `@description` - Detailed description
+- `@csspart` - Exposed CSS parts for styling
+- `@cssproperty` - CSS custom properties for theming
+
+## Example Component Structure
+```typescript
+// Copyright The Linux Foundation and each contributor to LFX.
+// SPDX-License-Identifier: MIT
+
+import { style } from './button.style';
+
+/**
+ * @element lfx-button
+ * @summary A button component for LFX applications
+ * @description This component provides consistent button styling across LFX applications
+ * @csspart button - The main button element
+ * @cssproperty --lfx-button-bg - Background color of the button
+ * @cssproperty --lfx-button-text - Text color of the button
+ */
+export class LFXButton extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  private getTemplate(): string {
+    return `
+      <style>${style}</style>
+
+      <button class="button" part="button">
+        <slot></slot>
+      </button>
+    `;
+  }
+
+  connectedCallback() {
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = this.getTemplate();
+      this._attachEventListeners();
+    }
+  }
+
+  disconnectedCallback() {
+    this._removeEventListeners();
+  }
+
+  private _attachEventListeners() {
+    // Add event listeners
+  }
+
+  private _removeEventListeners() {
+    // Clean up event listeners
+  }
+}
+
+// Use IIFE to register the component immediately
+(() => {
+  if (typeof window !== 'undefined') {
+    if (!customElements.get('lfx-button')) {
+      customElements.define('lfx-button', LFXButton);
+    }
+  }
+})();
+```
+
+## Style File Pattern
+```typescript
+// component.style.ts
+export const style = `
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+  background: var(--lfx-component-bg, transparent);
+  color: var(--lfx-component-text, #5b6367);
+}
+
+:host * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Component-specific styles */
+.component-container {
+  /* styles */
+}
+`;
+```
+
+## Attribute Handling
+- Use `attributeChangedCallback` for reactive attributes
+- Define `static get observedAttributes()` for watched attributes
+- Handle attribute/property synchronization manually
+- Use getters/setters for complex property handling
+
+## Event Handling
+- Use native DOM event handling
+- Add event listeners in `connectedCallback`
+- Remove event listeners in `disconnectedCallback`
+- Dispatch custom events for component interactions
+
+## Lifecycle Methods
+- `constructor()`: Set up shadow DOM, initialize state
+- `connectedCallback()`: Render template, attach listeners
+- `disconnectedCallback()`: Clean up listeners, observers
+- `attributeChangedCallback()`: Handle attribute changes
+
+## Testing Considerations
+- Test custom element registration
+- Test attribute/property handling
+- Test event dispatching and handling
+- Test shadow DOM structure
+- Test CSS custom property theming
+
+## Accessibility Requirements
+- Use semantic HTML within shadow DOM
+- Provide ARIA labels and descriptions
+- Ensure keyboard navigation support
+- Test with screen readers
+- Support high contrast themes
+
+## Performance Best Practices
+- Lazy render templates only when needed
+- Use event delegation where appropriate
+- Clean up resources in disconnectedCallback
+- Avoid unnecessary DOM manipulation
+- Cache template strings when possible

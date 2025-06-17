@@ -1,0 +1,62 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+---
+description: TypeScript standards and best practices for LFX UI Core
+alwaysApply: true
+---
+
+# TypeScript Standards for LFX UI Core
+
+## Core Principles
+- Use strict TypeScript configuration with all strict checks enabled
+- Prefer explicit types over `any` - use `unknown` if truly needed
+- Use proper module imports/exports following the package structure
+- All public APIs must have explicit types and JSDoc comments
+
+## Import/Export Patterns
+- Use named exports over default exports for better tree-shaking
+- Group imports: external libraries first, then internal modules
+- Use barrel exports in index.ts files for clean public APIs
+- Prefer `import type` for type-only imports
+
+## Type Definitions
+- Define interfaces for all component props and public APIs
+- Use union types and discriminated unions for component variants
+- Create utility types for common patterns (e.g., `ComponentSize`, `ThemeVariant`)
+- Document complex types with JSDoc comments
+
+## File Organization
+- Keep types in the same file as implementation when closely related
+- Create separate `.types.ts` files for shared type definitions
+- Use consistent naming: PascalCase for types/interfaces, camelCase for variables
+
+## Error Handling
+- Use proper error types instead of throwing strings
+- Implement type guards for runtime type checking
+- Handle async operations with proper error boundaries
+
+## Examples
+```typescript
+// ✅ Good: Explicit interface with JSDoc
+interface ButtonProps {
+  /** Button variant affecting styling */
+  variant: 'primary' | 'secondary' | 'tertiary';
+  /** Button size using design tokens */
+  size: ComponentSize;
+  /** Click handler */
+  onClick?: (event: MouseEvent) => void;
+}
+
+// ✅ Good: Named export with explicit return type
+export function createButton(props: ButtonProps): HTMLElement {
+  // implementation
+}
+
+// ❌ Avoid: Default export, implicit any
+export default function(props) {
+  // implementation
+}
+```
