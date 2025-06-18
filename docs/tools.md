@@ -225,6 +225,7 @@ lfx-tools {
   --lfx-tools-button-radius: 4px;
   --lfx-tools-icon-color: #666666;
   --lfx-tools-icon-hover-color: #333;
+  --lfx-tools-menu-z-index: 1000;
   --lfx-tools-menu-bg: #ffffff;
   --lfx-tools-menu-width: 240px;
   --lfx-tools-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -251,6 +252,7 @@ lfx-tools {
 | `--lfx-tools-button-radius`          | Button border radius        | `4px`                            |
 | `--lfx-tools-icon-color`             | Grid icon color             | `#666666`                        |
 | `--lfx-tools-icon-hover-color`       | Grid icon hover color       | `#333`                           |
+| `--lfx-tools-menu-z-index`           | Menu z-index                | `1000`                           |
 | `--lfx-tools-menu-bg`                | Menu background color       | `#ffffff`                        |
 | `--lfx-tools-menu-width`             | Menu width                  | `240px`                          |
 | `--lfx-tools-menu-shadow`            | Menu box shadow             | `0 4px 20px rgba(0, 0, 0, 0.15)` |

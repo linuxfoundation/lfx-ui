@@ -96,6 +96,8 @@ export * from './components';`;
 
 async function buildTokens() {
   try {
+    console.log('🔧 Building design tokens...');
+
     // Read tokens.json
     const tokensPath = path.resolve(__dirname, '../design/tokens/tokens.json');
     const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
@@ -122,11 +124,16 @@ async function buildTokens() {
     // Write index file
     fs.writeFileSync(path.join(mainDir, 'index.ts'), generateIndex());
 
-    console.log('Token and preset files generated successfully!');
+    console.log('✅ Token and preset files generated successfully!');
   } catch (error) {
-    console.error('Error generating files:', error);
+    console.error('❌ Error generating files:', error);
     process.exit(1);
   }
 }
 
-buildTokens();
+// Run the build if this script is executed directly
+if (require.main === module) {
+  buildTokens();
+}
+
+export { buildTokens };

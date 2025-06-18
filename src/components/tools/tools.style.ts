@@ -65,7 +65,7 @@ export const style = `
   position: absolute;
   top: 0;
   left: 100%;
-  z-index: 1000;
+  z-index: var(--lfx-tools-menu-z-index, 1000);
   background: var(--lfx-tools-menu-bg, #ffffff);
   border: 1px solid var(--lfx-tools-menu-border, #e1e5e9);
   border-radius: var(--lfx-tools-menu-radius, 8px);
