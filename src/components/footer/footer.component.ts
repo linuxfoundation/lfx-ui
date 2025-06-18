@@ -7,7 +7,7 @@ import { style } from './footer.style';
 /**
  * @element lfx-footer
  * @summary A footer component for LFX applications
- * @description This component provides a consistent footer across LFX applications
+ * @description This component provides a consistent footer across LFX applications with optional cookie consent script integration
  * @csspart footer - The main footer element
  * @csspart footer-container - The main container of the footer
  * @csspart footer-content - The content wrapper of the footer
@@ -23,6 +23,8 @@ import { style } from './footer.style';
  * @cssproperty --lfx-footer-font-family - Font family of footer text
  *
  * @attr {boolean} cookie-tracking - When true, appends the Osano cookie consent script to the document
+ *
+ * @fires cookie-script-error - Fired when the cookie consent script fails to load
  */
 export class LFXFooter extends HTMLElement {
   private _template!: HTMLTemplateElement;
@@ -81,7 +83,10 @@ export class LFXFooter extends HTMLElement {
   }
 
   private _handleCookieTracking(): void {
-    if (this.hasAttribute('cookie-tracking')) {
+    const cookieTrackingAttr = this.getAttribute('cookie-tracking');
+    const shouldEnable = cookieTrackingAttr === 'true' || cookieTrackingAttr === '';
+
+    if (shouldEnable) {
       this._appendOsanoScript();
     }
   }
@@ -101,6 +106,21 @@ export class LFXFooter extends HTMLElement {
     const script = document.createElement('script');
     script.src = LFXFooter.OSANO_SCRIPT_SRC;
     script.async = true;
+
+    // Add error handling
+    script.onerror = () => {
+      console.error('LFXFooter: Failed to load Osano cookie consent script');
+      // Dispatch custom event for error handling
+      this.dispatchEvent(
+        new CustomEvent('cookie-script-error', {
+          bubbles: true,
+          detail: {
+            scriptSrc: LFXFooter.OSANO_SCRIPT_SRC,
+            error: 'Script failed to load',
+          },
+        })
+      );
+    };
 
     if (document.head) {
       document.head.appendChild(script);

@@ -59,13 +59,16 @@ Example: [https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html](https:
 The footer component can automatically load the Osano cookie consent script when the `cookie-tracking` attribute is present:
 
 ```html
-<!-- Enable cookie tracking -->
+<!-- Enable cookie tracking (boolean attribute pattern) -->
 <lfx-footer cookie-tracking></lfx-footer>
 
-<!-- Or explicitly set to true -->
+<!-- Enable cookie tracking (explicit true) -->
 <lfx-footer cookie-tracking="true"></lfx-footer>
 
-<!-- Disable cookie tracking (default) -->
+<!-- Disable cookie tracking (explicit false) -->
+<lfx-footer cookie-tracking="false"></lfx-footer>
+
+<!-- Disable cookie tracking (no attribute) -->
 <lfx-footer></lfx-footer>
 ```
 
@@ -75,6 +78,25 @@ The footer component can automatically load the Osano cookie consent script when
 - The script is loaded asynchronously for better performance
 - The component automatically handles script deduplication
 - Works in both browser and server-side rendering environments
+- Includes error handling for script loading failures
+
+### Error Handling
+
+The component provides error handling for script loading failures:
+
+```javascript
+const footer = document.querySelector('lfx-footer');
+
+footer.addEventListener('cookie-script-error', (event) => {
+  console.error('Cookie script failed to load:', event.detail.error);
+  // Implement fallback behavior if needed
+});
+```
+
+**Error Event Details:**
+
+- `event.detail.scriptSrc`: The script URL that failed to load
+- `event.detail.error`: Error description
 
 ### Framework-Specific Cookie Tracking
 
@@ -123,6 +145,13 @@ function App() {
 | Attribute         | Type    | Description                                | Default |
 | ----------------- | ------- | ------------------------------------------ | ------- |
 | `cookie-tracking` | boolean | Enable Osano cookie consent script loading | `false` |
+
+**Boolean Attribute Behavior:**
+
+- `cookie-tracking` (no value) = enabled
+- `cookie-tracking="true"` = enabled
+- `cookie-tracking="false"` = disabled
+- No attribute = disabled
 
 ## Styling and Customization
 
