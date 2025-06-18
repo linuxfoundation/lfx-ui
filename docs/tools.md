@@ -8,6 +8,7 @@ A dropdown menu component with grid icon trigger for LFX applications.
 - Dropdown menu with organized sections
 - Font Awesome Pro icons
 - Custom Font Awesome kit support via `kit` attribute
+- Product selection via `product` attribute to highlight active menu items
 - External link indicators
 - Keyboard navigation support
 - Responsive design
@@ -72,6 +73,16 @@ tools.kit = 'your-kit-id';
 <lfx-tools kit="your-kit-id"></lfx-tools>
 ```
 
+### With product selection
+
+```html
+<!-- Highlight the Drive menu item as active -->
+<lfx-tools product="drive"></lfx-tools>
+
+<!-- Highlight the EasyCLA menu item as active -->
+<lfx-tools product="easycla"></lfx-tools>
+```
+
 ### Import
 
 ```typescript
@@ -99,6 +110,59 @@ The component comes with the standard LFX tools menu:
   - EasyCLA
   - Project Control Center
   - Security
+
+## Product Selection
+
+The `product` attribute allows you to highlight a specific menu item as active, giving it the same styling as hover/focus states.
+
+### Available Product Values
+
+| Product ID               | Menu Item              |
+| ------------------------ | ---------------------- |
+| `crowdfunding`           | Crowdfunding           |
+| `drive`                  | Drive                  |
+| `individual-dashboard`   | Individual Dashboard   |
+| `insights`               | Insights               |
+| `mentorship`             | Mentorship             |
+| `organization-dashboard` | Organization Dashboard |
+| `community-data`         | Community Data         |
+| `easycla`                | EasyCLA                |
+| `project-control-center` | Project Control Center |
+| `security`               | Security               |
+
+### Usage Examples
+
+```html
+<!-- Highlight Drive as the active product -->
+<lfx-tools product="drive"></lfx-tools>
+
+<!-- Highlight EasyCLA as the active product -->
+<lfx-tools product="easycla"></lfx-tools>
+
+<!-- No active product (default) -->
+<lfx-tools></lfx-tools>
+```
+
+### Programmatic Product Setting
+
+```typescript
+const tools = document.querySelector('lfx-tools') as LFXTools;
+
+// Set active product
+tools.product = 'drive';
+
+// Clear active product
+tools.product = null;
+```
+
+### Active State Styling
+
+When a product is selected, the corresponding menu item receives:
+
+- Blue background (`#ECF4FF`)
+- Bold text (font-weight: 600)
+- Blue icon color (`#0061A3`)
+- Same visual treatment as hover/focus states
 
 ## Customization
 
@@ -140,6 +204,10 @@ lfx-tools {
   --lfx-tools-menu-border: #e1e5e9;
   --lfx-tools-menu-text: #111827;
   --lfx-tools-menu-hover-bg: #ecf4ff;
+  --lfx-tools-menu-hover-text: #111827;
+  --lfx-tools-menu-active-bg: #ecf4ff;
+  --lfx-tools-menu-active-text: #111827;
+  --lfx-tools-menu-icon-active-color: #0061a3;
   --lfx-tools-section-header-color: #111827;
   --lfx-tools-font-family: 'Open Sans', sans-serif;
 }
@@ -147,24 +215,27 @@ lfx-tools {
 
 ### Available CSS Custom Properties
 
-| Property                           | Description                | Default                          |
-| ---------------------------------- | -------------------------- | -------------------------------- |
-| `--lfx-tools-button-size`          | Size of the trigger button | `32px`                           |
-| `--lfx-tools-button-bg`            | Button background color    | `transparent`                    |
-| `--lfx-tools-button-hover-bg`      | Button hover background    | `#ECF4FF`                        |
-| `--lfx-tools-button-radius`        | Button border radius       | `4px`                            |
-| `--lfx-tools-icon-color`           | Grid icon color            | `#666666`                        |
-| `--lfx-tools-icon-hover-color`     | Grid icon hover color      | `#333`                           |
-| `--lfx-tools-menu-bg`              | Menu background color      | `#ffffff`                        |
-| `--lfx-tools-menu-width`           | Menu width                 | `240px`                          |
-| `--lfx-tools-menu-shadow`          | Menu box shadow            | `0 4px 20px rgba(0, 0, 0, 0.15)` |
-| `--lfx-tools-menu-radius`          | Menu border radius         | `8px`                            |
-| `--lfx-tools-menu-border`          | Menu border color          | `#e1e5e9`                        |
-| `--lfx-tools-menu-text`            | Menu text color            | `#111827`                        |
-| `--lfx-tools-menu-hover-bg`        | Menu item hover background | `#ECF4FF`                        |
-| `--lfx-tools-menu-hover-text`      | Menu item hover text color | `#111827`                        |
-| `--lfx-tools-section-header-color` | Section header color       | `#111827`                        |
-| `--lfx-tools-font-family`          | Font family                | `'Open Sans', sans-serif`        |
+| Property                             | Description                 | Default                          |
+| ------------------------------------ | --------------------------- | -------------------------------- |
+| `--lfx-tools-button-size`            | Size of the trigger button  | `32px`                           |
+| `--lfx-tools-button-bg`              | Button background color     | `transparent`                    |
+| `--lfx-tools-button-hover-bg`        | Button hover background     | `#ECF4FF`                        |
+| `--lfx-tools-button-radius`          | Button border radius        | `4px`                            |
+| `--lfx-tools-icon-color`             | Grid icon color             | `#666666`                        |
+| `--lfx-tools-icon-hover-color`       | Grid icon hover color       | `#333`                           |
+| `--lfx-tools-menu-bg`                | Menu background color       | `#ffffff`                        |
+| `--lfx-tools-menu-width`             | Menu width                  | `240px`                          |
+| `--lfx-tools-menu-shadow`            | Menu box shadow             | `0 4px 20px rgba(0, 0, 0, 0.15)` |
+| `--lfx-tools-menu-radius`            | Menu border radius          | `8px`                            |
+| `--lfx-tools-menu-border`            | Menu border color           | `#e1e5e9`                        |
+| `--lfx-tools-menu-text`              | Menu text color             | `#111827`                        |
+| `--lfx-tools-menu-hover-bg`          | Menu item hover background  | `#ECF4FF`                        |
+| `--lfx-tools-menu-hover-text`        | Menu item hover text color  | `#111827`                        |
+| `--lfx-tools-menu-active-bg`         | Menu item active background | `#ECF4FF`                        |
+| `--lfx-tools-menu-active-text`       | Menu item active text color | `#111827`                        |
+| `--lfx-tools-menu-icon-active-color` | Menu item active icon color | `#0061A3`                        |
+| `--lfx-tools-section-header-color`   | Section header color        | `#111827`                        |
+| `--lfx-tools-font-family`            | Font family                 | `'Open Sans', sans-serif`        |
 
 ### Styling with CSS Parts
 
@@ -239,6 +310,9 @@ const tools = document.querySelector('lfx-tools') as LFXTools;
 // Set custom Font Awesome kit
 tools.kit = 'your-kit-id';
 
+// Set active product
+tools.product = 'drive';
+
 // Set custom menu data
 const customMenu: MenuSection[] = [
   {
@@ -273,6 +347,7 @@ import '@linuxfoundation/lfx-ui-core/components/tools';
 // In your component template
 <lfx-tools
   [menuData]="customMenuData"
+  [product]="activeProduct"
   (menu-opened)="onMenuOpened($event)"
   (menu-closed)="onMenuClosed($event)">
 </lfx-tools>
@@ -282,7 +357,7 @@ import '@linuxfoundation/lfx-ui-core/components/tools';
 
 ```vue
 <template>
-  <lfx-tools :menuData="customMenuData" @menu-opened="onMenuOpened" @menu-closed="onMenuClosed"> </lfx-tools>
+  <lfx-tools :menuData="customMenuData" :product="activeProduct" @menu-opened="onMenuOpened" @menu-closed="onMenuClosed"> </lfx-tools>
 </template>
 
 <script setup>
@@ -290,6 +365,7 @@ import '@linuxfoundation/lfx-ui-core/components/tools';
 import { ref } from 'vue';
 
 const customMenuData = ref([...]);
+const activeProduct = ref('drive');
 
 const onMenuOpened = (event) => {
   console.log('Menu opened:', event.detail);
@@ -305,6 +381,7 @@ import '@linuxfoundation/lfx-ui-core/components/tools';
 
 function MyComponent() {
   const toolsRef = useRef(null);
+  const activeProduct = 'drive';
 
   useEffect(() => {
     const tools = toolsRef.current;
@@ -320,7 +397,7 @@ function MyComponent() {
     };
   }, []);
 
-  return <lfx-tools ref={toolsRef}></lfx-tools>;
+  return <lfx-tools ref={toolsRef} product={activeProduct}></lfx-tools>;
 }
 ```
 
