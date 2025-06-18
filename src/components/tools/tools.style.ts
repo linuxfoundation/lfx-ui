@@ -147,6 +147,12 @@ export const style = `
   font-weight: 600;
 }
 
+.menu-link.active {
+  background-color: var(--lfx-tools-menu-active-bg, #ECF4FF);
+  color: var(--lfx-tools-menu-active-text, #111827);
+  font-weight: 600;
+}
+
 .menu-icon, .menu-link i {
   width: 16px;
   height: 16px;
@@ -174,12 +180,15 @@ export const style = `
   font-size: 14px;
   position: absolute;
   left: 0;
-  transition: all 0.15s ease;
 }
 
 .menu-link:hover i,
 .menu-link:focus i {
   color: var(--lfx-tools-menu-icon-hover-color, #0061A3);
+}
+
+.menu-link.active i {
+  color: var(--lfx-tools-menu-icon-active-color, #0061A3);
 }
 
 .menu-link i.fa-duotone {
@@ -191,14 +200,31 @@ export const style = `
   opacity: 1;
 }
 
+.menu-link.active i.fa-duotone {
+  opacity: 1;
+}
+
 .menu-link:hover i.fa-solid,
 .menu-link:focus i.fa-solid {
+  opacity: 0;
+}
+
+.menu-link.active i.fa-solid {
   opacity: 0;
 }
 
 .menu-label {
   flex: 1;
   font-weight: 400;
+}
+
+.menu-link:hover .menu-label,
+.menu-link:focus .menu-label {
+  font-weight: 600;
+}
+
+.menu-link.active .menu-label {
+  font-weight: 600;
 }
 
 .external-icon {

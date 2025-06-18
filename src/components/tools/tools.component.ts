@@ -17,6 +17,7 @@ import { style } from './tools.style';
  * @csspart menu-link - Menu item links
  *
  * @attr {string} kit - Font Awesome Pro kit ID (optional, assumes FA already loaded if not provided)
+ * @attr {string} product - Product identifier to set the corresponding menu item as active
  *
  * @cssproperty --lfx-tools-button-size - Size of the trigger button
  * @cssproperty --lfx-tools-button-bg - Background color of the button
@@ -25,6 +26,9 @@ import { style } from './tools.style';
  * @cssproperty --lfx-tools-menu-bg - Background color of the menu
  * @cssproperty --lfx-tools-menu-shadow - Box shadow for the menu
  * @cssproperty --lfx-tools-menu-width - Width of the dropdown menu
+ * @cssproperty --lfx-tools-menu-active-bg - Background color of active menu items
+ * @cssproperty --lfx-tools-menu-active-text - Text color of active menu items
+ * @cssproperty --lfx-tools-menu-icon-active-color - Icon color of active menu items
  */
 export class LFXTools extends HTMLElement {
   private _template!: HTMLTemplateElement;
@@ -33,19 +37,26 @@ export class LFXTools extends HTMLElement {
   private _button!: HTMLButtonElement;
   private _menu!: HTMLDivElement;
   private _kitId: string | null = null;
+  private _productId: string | null = null;
 
   // Default menu structure from the specification
   private _menuData: MenuSection[] = DEFAULT_MENU_DATA;
 
+  private _boundHandleButtonClick: EventListener;
+  private _boundHandleMenuClick: EventListener;
+  private _boundHandleOutsideClick: EventListener;
+
   static get observedAttributes() {
-    return ['kit'];
+    return ['kit', 'product'];
   }
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this._createTemplate();
-    this._handleOutsideClick = this._handleOutsideClick.bind(this);
+    this._boundHandleButtonClick = this._handleButtonClick.bind(this);
+    this._boundHandleMenuClick = this._handleMenuClick.bind(this);
+    this._boundHandleOutsideClick = this._handleOutsideClick.bind(this);
     this._loadOpenSansFont();
   }
 
@@ -55,6 +66,13 @@ export class LFXTools extends HTMLElement {
       this._loadFontAwesomeKit();
 
       // Re-render menu if already rendered to update icons
+      if (this._rendered) {
+        this._updateMenu();
+      }
+    } else if (name === 'product') {
+      this._productId = newValue;
+
+      // Re-render menu if already rendered to update active state
       if (this._rendered) {
         this._updateMenu();
       }
@@ -88,7 +106,7 @@ export class LFXTools extends HTMLElement {
       document.head.appendChild(link);
     }
 
-    if (this.shadowRoot && !this.shadowRoot.querySelector(`script[src*="${kitId}"]`)) {
+    if (this.shadowRoot && !this.shadowRoot.querySelector(`link[href*="${kitId}"]`)) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = `https://kit.fontawesome.com/${kitId}.css`;
@@ -117,6 +135,18 @@ export class LFXTools extends HTMLElement {
       this.setAttribute('kit', kitId);
     } else {
       this.removeAttribute('kit');
+    }
+  }
+
+  get product(): string | null {
+    return this._productId;
+  }
+
+  set product(productId: string | null) {
+    if (productId) {
+      this.setAttribute('product', productId);
+    } else {
+      this.removeAttribute('product');
     }
   }
 
@@ -185,6 +215,11 @@ export class LFXTools extends HTMLElement {
           linkElement.rel = 'noopener noreferrer';
         }
 
+        // Check if this item should be active based on product attribute
+        if (this._productId && item.product === this._productId) {
+          linkElement.classList.add('active');
+        }
+
         // Create icon element (no hover effect)
         const iconElement = document.createElement('i');
         iconElement.className = item.icon + ' fa-solid';
@@ -231,7 +266,7 @@ export class LFXTools extends HTMLElement {
       this._menu = this.shadowRoot!.querySelector('.tools-menu') as HTMLDivElement;
 
       // Set up event listeners
-      this._button.addEventListener('click', this._handleButtonClick.bind(this));
+      this._button.addEventListener('click', this._boundHandleButtonClick);
 
       // Populate menu
       this._updateMenu();
@@ -241,9 +276,12 @@ export class LFXTools extends HTMLElement {
   }
 
   disconnectedCallback(): void {
-    document.removeEventListener('click', this._handleOutsideClick);
+    document.removeEventListener('click', this._boundHandleOutsideClick);
     if (this._button) {
-      this._button.removeEventListener('click', this._handleButtonClick);
+      this._button.removeEventListener('click', this._boundHandleButtonClick);
+    }
+    if (this._menu) {
+      this._menu.removeEventListener('click', this._boundHandleMenuClick);
     }
   }
 
@@ -283,11 +321,11 @@ export class LFXTools extends HTMLElement {
 
     // Add click outside listener
     setTimeout(() => {
-      document.addEventListener('click', this._handleOutsideClick);
+      document.addEventListener('click', this._boundHandleOutsideClick);
     }, 0);
 
     // Add menu click listener
-    this._menu.addEventListener('click', this._handleMenuClick.bind(this));
+    this._menu.addEventListener('click', this._boundHandleMenuClick);
 
     // Dispatch custom event
     this.dispatchEvent(
@@ -306,8 +344,8 @@ export class LFXTools extends HTMLElement {
     this._button.setAttribute('aria-expanded', 'false');
 
     // Remove listeners
-    document.removeEventListener('click', this._handleOutsideClick);
-    this._menu.removeEventListener('click', this._handleMenuClick);
+    document.removeEventListener('click', this._boundHandleOutsideClick);
+    this._menu.removeEventListener('click', this._boundHandleMenuClick);
 
     // Dispatch custom event
     this.dispatchEvent(

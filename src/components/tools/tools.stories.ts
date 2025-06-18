@@ -234,3 +234,31 @@ export const WithEventHandling: Story = {
     },
   },
 };
+
+// Product attribute examples
+export const WithProductSelected: Story = {
+  render: () => html`
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+      <div>
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Drive (Active)</p>
+        <lfx-tools product="drive" kit="e6811dc2da"></lfx-tools>
+      </div>
+      <div>
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">EasyCLA (Active)</p>
+        <lfx-tools product="easycla" kit="e6811dc2da"></lfx-tools>
+      </div>
+      <div>
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Insights (Active)</p>
+        <lfx-tools product="insights" kit="e6811dc2da"></lfx-tools>
+      </div>
+    </div>
+  `,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Tools components with different products selected. The `product` attribute sets the corresponding menu item as active, giving it the same styling as hover/focus states. Available product values: `crowdfunding`, `drive`, `individual-dashboard`, `insights`, `mentorship`, `organization-dashboard`, `community-data`, `easycla`, `project-control-center`, `security`.',
+      },
+    },
+  },
+};
