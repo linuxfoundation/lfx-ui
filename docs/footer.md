@@ -1,6 +1,6 @@
 # Footer Component
 
-The footer component provides a consistent bottom section for your application with comprehensive styling options. Here's how to implement and customize it across different frameworks.
+The footer component provides a consistent bottom section for your application with comprehensive styling options and optional cookie consent script integration. Here's how to implement and customize it across different frameworks.
 
 ## Basic Usage
 
@@ -51,6 +51,107 @@ Then, use the component in your HTML:
 ```
 
 Example: [https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html](https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html)
+
+## Features
+
+### Cookie Consent Integration
+
+The footer component can automatically load the Osano cookie consent script when the `cookie-tracking` attribute is present:
+
+```html
+<!-- Enable cookie tracking (boolean attribute pattern) -->
+<lfx-footer cookie-tracking></lfx-footer>
+
+<!-- Enable cookie tracking (explicit true) -->
+<lfx-footer cookie-tracking="true"></lfx-footer>
+
+<!-- Disable cookie tracking (explicit false) -->
+<lfx-footer cookie-tracking="false"></lfx-footer>
+
+<!-- Disable cookie tracking (no attribute) -->
+<lfx-footer></lfx-footer>
+```
+
+**Important Notes:**
+
+- The script will only be loaded once, even if multiple footer components have cookie tracking enabled
+- The script is loaded asynchronously for better performance
+- The component automatically handles script deduplication
+- Works in both browser and server-side rendering environments
+- Includes error handling for script loading failures
+
+### Error Handling
+
+The component provides error handling for script loading failures:
+
+```javascript
+const footer = document.querySelector('lfx-footer');
+
+footer.addEventListener('cookie-script-error', (event) => {
+  console.error('Cookie script failed to load:', event.detail.error);
+  // Implement fallback behavior if needed
+});
+```
+
+**Error Event Details:**
+
+- `event.detail.scriptSrc`: The script URL that failed to load
+- `event.detail.error`: Error description
+
+### Framework-Specific Cookie Tracking
+
+#### Angular
+
+```typescript
+// In your component template
+<lfx-footer [attr.cookie-tracking]="enableCookieTracking"></lfx-footer>
+
+// In your component class
+export class AppComponent {
+  enableCookieTracking = true;
+}
+```
+
+#### Vue
+
+```vue
+<template>
+  <lfx-footer :cookie-tracking="enableCookieTracking" />
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      enableCookieTracking: true,
+    };
+  },
+};
+</script>
+```
+
+#### React
+
+```jsx
+function App() {
+  const [enableCookieTracking, setEnableCookieTracking] = useState(true);
+
+  return <lfx-footer cookie-tracking={enableCookieTracking} />;
+}
+```
+
+## Attributes
+
+| Attribute         | Type    | Description                                | Default |
+| ----------------- | ------- | ------------------------------------------ | ------- |
+| `cookie-tracking` | boolean | Enable Osano cookie consent script loading | `false` |
+
+**Boolean Attribute Behavior:**
+
+- `cookie-tracking` (no value) = enabled
+- `cookie-tracking="true"` = enabled
+- `cookie-tracking="false"` = disabled
+- No attribute = disabled
 
 ## Styling and Customization
 
