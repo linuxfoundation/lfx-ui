@@ -132,15 +132,39 @@ The `product` attribute allows you to highlight a specific menu item as active, 
 
 ### Usage Examples
 
-```html
-<!-- Highlight Drive as the active product -->
-<lfx-tools product="drive"></lfx-tools>
+```typescript
+import { LFXTools, MenuSection, MenuItem } from '@linuxfoundation/lfx-ui-core/components/tools';
 
-<!-- Highlight EasyCLA as the active product -->
-<lfx-tools product="easycla"></lfx-tools>
+// Get component reference
+const tools = document.querySelector('lfx-tools') as LFXTools;
 
-<!-- No active product (default) -->
-<lfx-tools></lfx-tools>
+// Set custom Font Awesome kit
+tools.kit = 'your-kit-id';
+
+// Set active product
+tools.product = 'drive';
+
+// Set custom menu data
+const customMenu: MenuSection[] = [
+  {
+    section: 'Development',
+    items: [
+      {
+        label: 'GitHub',
+        icon: 'fa-brands fa-github',
+        url: 'https://github.com',
+        target: '_blank',
+      },
+    ],
+  },
+];
+
+tools.menuData = customMenu;
+
+// Listen to events
+tools.addEventListener('menu-opened', (e: CustomEvent) => {
+  console.log('Menu state:', e.detail.isOpen);
+});
 ```
 
 ### Programmatic Product Setting
@@ -189,16 +213,20 @@ const toolsElement = document.querySelector('lfx-tools') as LFXTools;
 toolsElement.menuData = customMenu;
 ```
 
+**Note**: The `menuData` setter includes comprehensive validation to ensure data integrity. Invalid data structures will be rejected with detailed error messages in the console, preventing runtime errors.
+
 ### Styling with CSS Custom Properties
 
 ```css
 lfx-tools {
-  --lfx-tools-button-size: 40px;
+  --lfx-tools-button-size: 32px;
   --lfx-tools-button-bg: transparent;
   --lfx-tools-button-hover-bg: #ecf4ff;
+  --lfx-tools-button-radius: 4px;
   --lfx-tools-icon-color: #666666;
+  --lfx-tools-icon-hover-color: #333;
   --lfx-tools-menu-bg: #ffffff;
-  --lfx-tools-menu-width: 280px;
+  --lfx-tools-menu-width: 240px;
   --lfx-tools-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   --lfx-tools-menu-radius: 8px;
   --lfx-tools-menu-border: #e1e5e9;
@@ -301,39 +329,30 @@ document.querySelector('lfx-tools').addEventListener('menu-closed', (event) => {
 
 ## TypeScript
 
+### Interfaces
+
+```typescript
+// MenuItem interface
+interface MenuItem {
+  label: string;
+  icon: string;
+  url: string;
+  target: '_blank' | '_self';
+  styleClass?: string;
+  product?: string; // Optional product identifier for active state
+}
+
+// MenuSection interface
+interface MenuSection {
+  section: string;
+  items: MenuItem[];
+}
+```
+
+### Usage Examples
+
 ```typescript
 import { LFXTools, MenuSection, MenuItem } from '@linuxfoundation/lfx-ui-core/components/tools';
-
-// Get component reference
-const tools = document.querySelector('lfx-tools') as LFXTools;
-
-// Set custom Font Awesome kit
-tools.kit = 'your-kit-id';
-
-// Set active product
-tools.product = 'drive';
-
-// Set custom menu data
-const customMenu: MenuSection[] = [
-  {
-    section: 'Development',
-    items: [
-      {
-        label: 'GitHub',
-        icon: 'fa-brands fa-github',
-        url: 'https://github.com',
-        target: '_blank',
-      },
-    ],
-  },
-];
-
-tools.menuData = customMenu;
-
-// Listen to events
-tools.addEventListener('menu-opened', (e: CustomEvent) => {
-  console.log('Menu state:', e.detail.isOpen);
-});
 ```
 
 ## Framework Integration
@@ -421,3 +440,45 @@ The component includes built-in accessibility features:
 ## License
 
 This component is part of the LFX UI Core library and follows the same licensing terms.
+
+## Data Validation
+
+The component includes comprehensive validation for the `menuData` property to prevent runtime errors:
+
+### Validation Rules
+
+- **Top-level**: Must be an array of `MenuSection` objects
+- **Section**: Must have a non-empty `section` string and an array of `items`
+- **Items**: Each item must have:
+  - `label`: Non-empty string
+  - `icon`: Non-empty string
+  - `url`: Non-empty string
+  - `target`: Must be either `'_blank'` or `'_self'`
+  - `styleClass` (optional): Non-empty string if provided
+  - `product` (optional): Non-empty string if provided
+
+### Error Handling
+
+Invalid data will be rejected with detailed console error messages indicating the exact location and nature of the validation failure. The component will continue to use existing data rather than crashing.
+
+### Example Validation Error
+
+```javascript
+// This will be rejected with a console error
+const invalidData = [
+  {
+    section: '', // Empty section name
+    items: [
+      {
+        label: 'Test',
+        icon: 'fa-test',
+        url: 'https://example.com',
+        target: '_invalid', // Invalid target
+      },
+    ],
+  },
+];
+
+tools.menuData = invalidData;
+// Console: "LFXTools: menuData[0].section must be a non-empty string"
+```

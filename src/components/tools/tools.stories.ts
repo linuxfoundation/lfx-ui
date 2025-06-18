@@ -101,7 +101,7 @@ export const CustomMenuItems: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Tools component with custom menu items. You can override the default menu structure by setting the `menuItems` property.',
+        story: 'Tools component with custom menu items. You can override the default menu structure by setting the `menuData` property.',
       },
     },
   },

@@ -120,6 +120,73 @@ export class LFXTools extends HTMLElement {
   }
 
   set menuData(data: MenuSection[]) {
+    // Validate the input data structure
+    if (!Array.isArray(data)) {
+      console.error('LFXTools: menuData must be an array of MenuSection objects');
+      return;
+    }
+
+    // Validate each section
+    for (let i = 0; i < data.length; i++) {
+      const section = data[i];
+
+      if (!section || typeof section !== 'object') {
+        console.error(`LFXTools: menuData[${i}] must be a MenuSection object`);
+        return;
+      }
+
+      if (typeof section.section !== 'string' || !section.section.trim()) {
+        console.error(`LFXTools: menuData[${i}].section must be a non-empty string`);
+        return;
+      }
+
+      if (!Array.isArray(section.items)) {
+        console.error(`LFXTools: menuData[${i}].items must be an array of MenuItem objects`);
+        return;
+      }
+
+      // Validate each item in the section
+      for (let j = 0; j < section.items.length; j++) {
+        const item = section.items[j];
+
+        if (!item || typeof item !== 'object') {
+          console.error(`LFXTools: menuData[${i}].items[${j}] must be a MenuItem object`);
+          return;
+        }
+
+        if (typeof item.label !== 'string' || !item.label.trim()) {
+          console.error(`LFXTools: menuData[${i}].items[${j}].label must be a non-empty string`);
+          return;
+        }
+
+        if (typeof item.icon !== 'string' || !item.icon.trim()) {
+          console.error(`LFXTools: menuData[${i}].items[${j}].icon must be a non-empty string`);
+          return;
+        }
+
+        if (typeof item.url !== 'string' || !item.url.trim()) {
+          console.error(`LFXTools: menuData[${i}].items[${j}].url must be a non-empty string`);
+          return;
+        }
+
+        if (item.target !== '_blank' && item.target !== '_self') {
+          console.error(`LFXTools: menuData[${i}].items[${j}].target must be either '_blank' or '_self'`);
+          return;
+        }
+
+        // Validate optional properties
+        if (item.styleClass !== undefined && (typeof item.styleClass !== 'string' || !item.styleClass.trim())) {
+          console.error(`LFXTools: menuData[${i}].items[${j}].styleClass must be a non-empty string if provided`);
+          return;
+        }
+
+        if (item.product !== undefined && (typeof item.product !== 'string' || !item.product.trim())) {
+          console.error(`LFXTools: menuData[${i}].items[${j}].product must be a non-empty string if provided`);
+          return;
+        }
+      }
+    }
+
     this._menuData = data;
     if (this._rendered) {
       this._updateMenu();
