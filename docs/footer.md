@@ -1,6 +1,6 @@
 # Footer Component
 
-The footer component provides a consistent bottom section for your application with comprehensive styling options. Here's how to implement and customize it across different frameworks.
+The footer component provides a consistent bottom section for your application with comprehensive styling options and optional cookie consent script integration. Here's how to implement and customize it across different frameworks.
 
 ## Basic Usage
 
@@ -51,6 +51,78 @@ Then, use the component in your HTML:
 ```
 
 Example: [https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html](https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html)
+
+## Features
+
+### Cookie Consent Integration
+
+The footer component can automatically load the Osano cookie consent script when the `cookie-tracking` attribute is present:
+
+```html
+<!-- Enable cookie tracking -->
+<lfx-footer cookie-tracking></lfx-footer>
+
+<!-- Or explicitly set to true -->
+<lfx-footer cookie-tracking="true"></lfx-footer>
+
+<!-- Disable cookie tracking (default) -->
+<lfx-footer></lfx-footer>
+```
+
+**Important Notes:**
+
+- The script will only be loaded once, even if multiple footer components have cookie tracking enabled
+- The script is loaded asynchronously for better performance
+- The component automatically handles script deduplication
+- Works in both browser and server-side rendering environments
+
+### Framework-Specific Cookie Tracking
+
+#### Angular
+
+```typescript
+// In your component template
+<lfx-footer [attr.cookie-tracking]="enableCookieTracking"></lfx-footer>
+
+// In your component class
+export class AppComponent {
+  enableCookieTracking = true;
+}
+```
+
+#### Vue
+
+```vue
+<template>
+  <lfx-footer :cookie-tracking="enableCookieTracking" />
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      enableCookieTracking: true,
+    };
+  },
+};
+</script>
+```
+
+#### React
+
+```jsx
+function App() {
+  const [enableCookieTracking, setEnableCookieTracking] = useState(true);
+
+  return <lfx-footer cookie-tracking={enableCookieTracking} />;
+}
+```
+
+## Attributes
+
+| Attribute         | Type    | Description                                | Default |
+| ----------------- | ------- | ------------------------------------------ | ------- |
+| `cookie-tracking` | boolean | Enable Osano cookie consent script loading | `false` |
 
 ## Styling and Customization
 

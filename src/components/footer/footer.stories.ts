@@ -5,7 +5,7 @@ import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './footer.component';
 
-// Type for CSS custom properties
+// Type for CSS custom properties and attributes
 interface FooterCSSProps {
   '--lfx-footer-bg'?: string;
   '--lfx-footer-text'?: string;
@@ -14,6 +14,7 @@ interface FooterCSSProps {
   '--lfx-footer-padding'?: string;
   '--lfx-footer-font-size'?: string;
   '--lfx-footer-text-align'?: string;
+  'cookie-tracking'?: boolean;
   [key: string]: any;
 }
 
@@ -26,6 +27,12 @@ const meta: Meta<FooterCSSProps> = {
       description: {
         component: `
 A footer component that displays consistent copyright and legal information across LFX applications.
+
+## Features
+- **Cookie Tracking**: Enable Osano cookie consent script with the \`cookie-tracking\` attribute
+- **Customizable Styling**: Extensive CSS custom properties for theming
+- **Accessibility**: Semantic HTML with proper ARIA attributes
+- **Responsive**: Mobile-optimized design
 
 ## Styling
 The footer can be styled using CSS custom properties for maximum flexibility:
@@ -46,6 +53,11 @@ Plus many more for advanced customization including responsive and accessibility
     },
   },
   argTypes: {
+    'cookie-tracking': {
+      control: 'boolean',
+      description: 'Enable Osano cookie consent script',
+      table: { category: 'Attributes' },
+    },
     '--lfx-footer-bg': {
       control: 'color',
       description: 'Background color of the footer',
@@ -91,7 +103,7 @@ Plus many more for advanced customization including responsive and accessibility
 
     return html`
       <div>
-        <lfx-footer style="${styles}"></lfx-footer>
+        <lfx-footer style="${styles}" ?cookie-tracking="${args['cookie-tracking']}"></lfx-footer>
       </div>
     `;
   },
@@ -103,6 +115,25 @@ type Story = StoryObj<FooterCSSProps>;
 // Default story
 export const Default: Story = {
   args: {},
+};
+
+// Footer with cookie tracking enabled
+export const WithCookieTracking: Story = {
+  args: {
+    'cookie-tracking': true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+This story demonstrates the footer with cookie tracking enabled. When the \`cookie-tracking\` attribute is set to \`true\`,
+the component will automatically append the Osano cookie consent script to the document head.
+
+**Note**: The script will only be added once, even if multiple footer components have cookie tracking enabled.
+        `,
+      },
+    },
+  },
 };
 
 // Light theme
