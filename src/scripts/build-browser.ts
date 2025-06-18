@@ -24,7 +24,7 @@ function extractComponents(): ComponentInfo[] {
   let match;
   while ((match = exportRegex.exec(content)) !== null) {
     const [, folder, file] = match;
-    const componentName = folder.replace('-', ''); // Convert kebab-case to camelCase
+    const componentName = folder.replace(/-(.)/g, (_, letter: string) => letter.toUpperCase()); // Convert kebab-case to camelCase
     components.push({
       name: componentName,
       path: join(__dirname, '../components', folder, `${file}.ts`),
