@@ -1,6 +1,6 @@
 ---
 description: Design token standards and usage patterns for LFX UI Core
-globs: ["src/design/**/*", "src/scripts/**/*"]
+globs: src/design/**/*,src/scripts/**/*
 alwaysApply: false
 ---
 

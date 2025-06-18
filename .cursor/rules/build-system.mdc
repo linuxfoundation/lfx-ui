@@ -1,6 +1,6 @@
 ---
 description: Build system and package management standards for LFX UI Core
-globs: ["package.json", "tsconfig.json", "src/scripts/**/*", "*.config.*"]
+globs: tsconfig.json,package.json,src/scripts/**/*,**/package.json
 alwaysApply: false
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Storybook story creation and documentation standards for LFX UI Core
-globs: ["**/*.stories.ts", "**/*.stories.js", "**/*.mdx"]
+globs: **/*.stories.ts,**/*.mdx
 alwaysApply: false
 ---
 
