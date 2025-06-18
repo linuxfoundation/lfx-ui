@@ -1,6 +1,6 @@
 ---
 description: Vanilla web component development standards for LFX UI Core
-globs: ["src/components/**/*"]
+globs: src/components/**/*
 alwaysApply: false
 ---
 

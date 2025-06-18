@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 export const style = `
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
-
 :host {
   display: block;
   background: var(--lfx-footer-bg, transparent);

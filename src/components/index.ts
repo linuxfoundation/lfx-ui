@@ -2,3 +2,4 @@
 // SPDX-License-Identifier: MIT
 
 export * from './footer/footer.component';
+export * from './tools/tools.component';
