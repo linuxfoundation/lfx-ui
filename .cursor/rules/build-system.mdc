@@ -11,7 +11,6 @@ alwaysApply: false
 - Include all necessary build scripts
 - Configure proper exports for different module systems
 - Set appropriate package metadata (author, license, etc.)
-- Use Yarn as the package manager (yarn@4.9.0)
 
 ## Build Script Guidelines
 - `build:tokens`: Generate design tokens from source using TypeScript
@@ -75,8 +74,8 @@ dist/
 - Support both development and static build workflows
 
 ## Package Manager
-- Use Yarn 4.9.0 as the primary package manager
-- Maintain package-lock.json for npm compatibility
+- Use npm as the primary package manager
+- Maintain package-lock.json for dependency locking
 - Configure proper peerDependencies for external tools
 - Use exact versions for critical dependencies
 
