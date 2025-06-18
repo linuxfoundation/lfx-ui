@@ -3,31 +3,33 @@ description: Vanilla web component development standards for LFX UI Core
 globs: src/components/**/*
 alwaysApply: false
 ---
-
 # Vanilla Web Component Standards for LFX UI Core
 
 ## Component Structure
 All components should follow this structure:
 
 1. Copyright header with SPDX license identifier
-2. Style import from separate `.style.ts` file
-3. JSDoc comments with element documentation
+2. Import statements (styles, utilities, services)
+3. Comprehensive JSDoc comments with element documentation
 4. Component class extending HTMLElement
-5. Constructor with shadow DOM setup
-6. Private template method
-7. connectedCallback for rendering
-8. IIFE for component registration
+5. Constructor with shadow DOM setup and template creation
+6. Private template creation method
+7. connectedCallback for rendering and initialization
+8. disconnectedCallback for cleanup
+9. Component registration with IIFE
 
 ## Naming Conventions
-- Component class: PascalCase with LFX prefix (e.g., `LFXFooter`)
-- Custom element tag: kebab-case with `lfx-` prefix (e.g., `lfx-footer`)
+- Component class: PascalCase with LFX prefix (e.g., `LFXFooter`, `LFXTools`)
+- Custom element tag: kebab-case with `lfx-` prefix (e.g., `lfx-footer`, `lfx-tools`)
 - CSS custom properties: kebab-case with `--lfx-` prefix
-- Private methods: underscore prefix (e.g., `_handleClick`)
+- Private methods: underscore prefix (e.g., `_handleClick`, `_createTemplate`)
+- Private properties: underscore prefix (e.g., `_template`, `_rendered`)
 
 ## Shadow DOM Setup
 - Always use `{ mode: 'open' }` for shadow DOM
+- Use `StylesheetManager` utility for optimal stylesheet handling
 - Check for shadowRoot existence before manipulation
-- Use template strings for HTML structure
+- Use template elements for better performance
 
 ## Style Architecture
 - Separate styles into `.style.ts` files
@@ -35,87 +37,141 @@ All components should follow this structure:
 - Use CSS custom properties for themeable values
 - Include `:host` styles for component container
 - Reset margins/padding and set box-sizing in `:host *`
+- Support responsive design with media queries
+- Include accessibility features (high contrast, reduced motion)
+- Use constructible stylesheets with fallback support
 
 ## JSDoc Documentation
-Document components with:
+Document components with comprehensive JSDoc comments:
 - `@element` - Custom element tag name
 - `@summary` - Brief description
-- `@description` - Detailed description
+- `@description` - Detailed description with features
 - `@csspart` - Exposed CSS parts for styling
 - `@cssproperty` - CSS custom properties for theming
+- `@attr` - Component attributes with types and descriptions
+- `@fires` - Custom events dispatched by the component
+- `@example` - Usage examples (optional)
 
 ## Example Component Structure
 ```typescript
 // Copyright The Linux Foundation and each contributor to LFX.
 // SPDX-License-Identifier: MIT
 
-import { style } from './button.style';
+import { StylesheetManager } from '../../core/styles/stylesheet-utils';
+import { style } from './component.style';
 
 /**
- * @element lfx-button
- * @summary A button component for LFX applications
- * @description This component provides consistent button styling across LFX applications
- * @csspart button - The main button element
- * @cssproperty --lfx-button-bg - Background color of the button
- * @cssproperty --lfx-button-text - Text color of the button
+ * @element lfx-component
+ * @summary A component for LFX applications
+ * @description This component provides consistent functionality across LFX applications
+ * @csspart component - The main component element
+ * @csspart content - The content wrapper
+ * @cssproperty --lfx-component-bg - Background color of the component
+ * @cssproperty --lfx-component-text - Text color of the component
+ * @attr {boolean} enabled - When true, enables component functionality
+ * @fires component-click - Fired when the component is clicked
  */
-export class LFXButton extends HTMLElement {
+export class LFXComponent extends HTMLElement {
+  private _template!: HTMLTemplateElement;
+  private _rendered = false;
+  private _boundHandleClick: EventListener;
+
+  static get observedAttributes(): string[] {
+    return ['enabled'];
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this._createTemplate();
+    this._boundHandleClick = this._handleClick.bind(this);
   }
 
-  private getTemplate(): string {
-    return `
-      <style>${style}</style>
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (name === 'enabled' && this._rendered) {
+      this._updateEnabledState();
+    }
+  }
 
-      <button class="button" part="button">
-        <slot></slot>
-      </button>
+  private _createTemplate(): void {
+    this._template = document.createElement('template');
+    this._template.innerHTML = `
+      <div class="component-container" part="component" role="button" tabindex="0">
+        <div class="component-content" part="content">
+          <slot></slot>
+        </div>
+      </div>
     `;
   }
 
-  connectedCallback() {
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = this.getTemplate();
-      this._attachEventListeners();
+  connectedCallback(): void {
+    if (!this._rendered) {
+      // Apply styles using utility (with caching)
+      StylesheetManager.applyStyles(this.shadowRoot!, style, 'lfx-component');
+
+      // Add template content
+      const content = this._template.content.cloneNode(true);
+      this.shadowRoot!.appendChild(content);
+      this._rendered = true;
     }
+
+    this._attachEventListeners();
+    this._updateEnabledState();
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     this._removeEventListeners();
   }
 
-  private _attachEventListeners() {
-    // Add event listeners
+  private _attachEventListeners(): void {
+    const element = this.shadowRoot?.querySelector('.component-container');
+    if (element) {
+      element.addEventListener('click', this._boundHandleClick);
+    }
   }
 
-  private _removeEventListeners() {
-    // Clean up event listeners
+  private _removeEventListeners(): void {
+    const element = this.shadowRoot?.querySelector('.component-container');
+    if (element) {
+      element.removeEventListener('click', this._boundHandleClick);
+    }
+  }
+
+  private _handleClick(event: Event): void {
+    this.dispatchEvent(
+      new CustomEvent('component-click', {
+        bubbles: true,
+        detail: { originalEvent: event }
+      })
+    );
+  }
+
+  private _updateEnabledState(): void {
+    const enabled = this.hasAttribute('enabled');
+    const element = this.shadowRoot?.querySelector('.component-container');
+    if (element) {
+      element.setAttribute('aria-disabled', (!enabled).toString());
+    }
   }
 }
 
-// Use IIFE to register the component immediately
-(() => {
-  if (typeof window !== 'undefined') {
-    if (!customElements.get('lfx-button')) {
-      customElements.define('lfx-button', LFXButton);
-    }
-  }
-})();
+// Register component
+if (typeof window !== 'undefined' && !customElements.get('lfx-component')) {
+  customElements.define('lfx-component', LFXComponent);
+}
 ```
 
 ## Style File Pattern
 ```typescript
 // component.style.ts
 export const style = `
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
-
 :host {
   display: block;
-  font-family: 'Open Sans', sans-serif;
   background: var(--lfx-component-bg, transparent);
   color: var(--lfx-component-text, #5b6367);
+  font-family: var(--lfx-component-font-family, 'Open Sans', sans-serif);
+  font-size: var(--lfx-component-font-size, 1rem);
+  line-height: var(--lfx-component-line-height, 1.5);
 }
 
 :host * {
@@ -124,30 +180,129 @@ export const style = `
   box-sizing: border-box;
 }
 
-/* Component-specific styles */
 .component-container {
-  /* styles */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--lfx-component-padding, 1rem);
+  border-radius: var(--lfx-component-border-radius, 4px);
+  transition: var(--lfx-component-transition, all 0.2s ease);
+}
+
+.component-container:hover {
+  background: var(--lfx-component-hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.component-container:focus {
+  outline: var(--lfx-component-focus-outline, 2px solid currentColor);
+  outline-offset: var(--lfx-component-focus-offset, 2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host {
+    font-size: var(--lfx-component-font-size-mobile, 0.875rem);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :host {
+    background: var(--lfx-component-bg-high-contrast, Canvas);
+    color: var(--lfx-component-text-high-contrast, CanvasText);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .component-container {
+    transition: none;
+  }
 }
 `;
 ```
 
-## Attribute Handling
+## StylesheetManager Utility
+Use the `StylesheetManager` utility for optimal stylesheet handling:
+- Supports constructible stylesheets with fallback
+- Provides caching for performance
+- Handles duplicate stylesheet prevention
+- Supports dynamic style addition/removal
+
+```typescript
+// Apply styles with caching
+StylesheetManager.applyStyles(this.shadowRoot!, style, 'lfx-component');
+
+// Add additional styles
+StylesheetManager.addStyles(this.shadowRoot!, additionalStyle, 'additional');
+
+// Remove styles
+StylesheetManager.removeStyles(this.shadowRoot!, style, 'lfx-component');
+```
+
+## Attribute and Property Handling
 - Use `attributeChangedCallback` for reactive attributes
 - Define `static get observedAttributes()` for watched attributes
 - Handle attribute/property synchronization manually
 - Use getters/setters for complex property handling
+- Validate input data in setters
 
 ## Event Handling
-- Use native DOM event handling
+- Use bound event listeners for proper cleanup
 - Add event listeners in `connectedCallback`
 - Remove event listeners in `disconnectedCallback`
 - Dispatch custom events for component interactions
+- Include relevant data in event details
 
 ## Lifecycle Methods
-- `constructor()`: Set up shadow DOM, initialize state
-- `connectedCallback()`: Render template, attach listeners
-- `disconnectedCallback()`: Clean up listeners, observers
-- `attributeChangedCallback()`: Handle attribute changes
+- `constructor()`: Set up shadow DOM, initialize state, bind methods
+- `connectedCallback()`: Render template, attach listeners, initialize
+- `disconnectedCallback()`: Clean up listeners, observers, resources
+- `attributeChangedCallback()`: Handle attribute changes reactively
+
+## Storybook Integration
+Create comprehensive Storybook stories for each component:
+- Document all CSS custom properties
+- Provide multiple theme variations
+- Include accessibility examples
+- Show responsive behavior
+- Demonstrate all component states
+
+```typescript
+// component.stories.ts
+import { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import './component.component';
+
+const meta: Meta = {
+  title: 'Components/Component',
+  component: 'lfx-component',
+  parameters: {
+    docs: {
+      description: {
+        component: 'Component description with features and usage...'
+      }
+    }
+  },
+  argTypes: {
+    enabled: {
+      control: 'boolean',
+      description: 'Enable component functionality'
+    },
+    '--lfx-component-bg': {
+      control: 'color',
+      description: 'Background color'
+    }
+  }
+};
+```
+
+## Browser Bundle Support
+Include a `browser.ts` file for browser bundle compatibility:
+```typescript
+// browser.ts
+import './component.component';
+```
 
 ## Testing Considerations
 - Test custom element registration
@@ -155,6 +310,9 @@ export const style = `
 - Test event dispatching and handling
 - Test shadow DOM structure
 - Test CSS custom property theming
+- Test accessibility features
+- Test responsive behavior
+- Test lifecycle methods
 
 ## Accessibility Requirements
 - Use semantic HTML within shadow DOM
@@ -162,10 +320,22 @@ export const style = `
 - Ensure keyboard navigation support
 - Test with screen readers
 - Support high contrast themes
+- Include focus management
+- Support reduced motion preferences
 
 ## Performance Best Practices
-- Lazy render templates only when needed
+- Use template elements for better performance
+- Cache template content to avoid recreation
 - Use event delegation where appropriate
 - Clean up resources in disconnectedCallback
 - Avoid unnecessary DOM manipulation
-- Cache template strings when possible
+- Use constructible stylesheets when supported
+- Implement proper caching strategies
+
+## Advanced Patterns
+- Support external service integration (Font Awesome, Google Fonts)
+- Handle dynamic content updates
+- Support complex data structures with validation
+- Implement public API methods for external control
+- Support theme switching and customization
+- Handle error states gracefully
