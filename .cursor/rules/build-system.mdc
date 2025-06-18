@@ -3,7 +3,6 @@ description: Build system and package management standards for LFX UI Core
 globs: tsconfig.json,package.json,src/scripts/**/*,**/package.json
 alwaysApply: false
 ---
-
 # Build System Standards for LFX UI Core
 
 ## Package.json Standards
@@ -14,14 +13,18 @@ alwaysApply: false
 - Set appropriate package metadata (author, license, etc.)
 
 ## Build Script Guidelines
-- `build:tokens`: Generate design tokens from source
-- `build:browser`: Create browser-compatible bundles
-- `build`: Full build including formatting and TypeScript compilation
+- `build:tokens`: Generate design tokens from source using TypeScript
+- `build:browser`: Create browser-compatible bundles for web components
+- `build`: Full build including tokens, formatting, TypeScript compilation, and browser bundles
 - `format`: Run Prettier on all source files
+- `start`: Alias for Storybook development server
+- `storybook`: Start Storybook development server on port 6006
+- `build-storybook`: Build static Storybook for deployment
 - Scripts should be idempotent and handle failures gracefully
 
 ## TypeScript Configuration
 - Target ES2020 for modern browser support
+- Use CommonJS module system for Node.js compatibility
 - Enable strict mode for better type safety
 - Generate declaration files for TypeScript consumers
 - Configure proper rootDir and outDir
@@ -36,40 +39,85 @@ dist/
 ├── index.js          # Main entry point
 ├── index.d.ts        # TypeScript declarations
 ├── components/       # Component exports
-├── browser/          # Browser bundles
-└── design/          # Generated tokens
+├── browser/          # Browser bundles for web components
+├── design/          # Generated tokens and presets
+└── core/            # Core configurations (prettier, etc.)
 ```
 
 ### Export Configuration
 - Main entry: CommonJS for Node.js compatibility
 - Module entry: ES modules for bundlers
-- Browser field: Browser-optimized builds
-- Separate exports for components and configurations
+- Separate exports for components, prettier-config, and design tokens
+- Browser bundles available in dist/browser/ directory
 
 ## Token Build Process
-1. Read source tokens from `src/design/tokens/`
-2. Transform using build scripts in `src/scripts/`
-3. Generate platform-specific outputs (CSS, JS, JSON)
-4. Output to `dist/design/` with proper file structure
+1. Read source tokens from `src/design/tokens/tokens.json`
+2. Transform using TypeScript build scripts in `src/scripts/`
+3. Generate platform-specific outputs (TypeScript modules)
+4. Create hierarchical token structure (primitive → semantic → component)
+5. Generate preset configurations for easy consumption
+6. Output to `dist/design/` with proper file structure
 
 ## Browser Bundle Guidelines
 - Use Browserify with TypeScript plugin (tsify)
-- Create separate bundles for each major component
-- Minify production bundles
+- Create separate bundles for each web component
+- Extract component information from components index
+- Generate browser-compatible bundles in `dist/browser/`
 - Include source maps for development
+- Support both individual component and full library consumption
 
-## Version Management
-- Follow semantic versioning (semver)
-- Use git tags for version releases
-- Automate version bumping in CI/CD
-- Update CHANGELOG.md with each release
+## Storybook Integration
+- Use Storybook 8.4.5 with web-components-vite framework
+- Configure for web components and MDX documentation
+- Enable autodocs for automatic documentation generation
+- Include essential addons: links, interactions, and essentials
+- Support both development and static build workflows
 
-## File Inclusion
-Only include necessary files in the published package:
-- `dist/` directory with built assets
-- `README.md` for documentation
-- `LICENSE` for legal requirements
-- Exclude source files, tests, and development configs
+## Package Manager
+- Use npm as the primary package manager
+- Maintain package-lock.json for dependency locking
+- Configure proper peerDependencies for external tools
+- Use exact versions for critical dependencies
+
+## File Organization
+```
+src/
+├── components/       # Web components
+├── core/            # Core configurations and utilities
+├── design/          # Design tokens and presets
+└── scripts/         # Build and utility scripts
+```
+
+## Quality Checks
+- Run Prettier formatting before build
+- Validate TypeScript compilation
+- Check for missing exports
+- Verify package.json structure
+- Test bundle integrity
+- Validate Storybook build
+
+## Performance Considerations
+- Use tree-shaking friendly exports
+- Minimize bundle sizes
+- Avoid including unnecessary dependencies
+- Optimize token generation for large token sets
+- Support incremental builds
+
+## Publishing Workflow
+1. Run full build and tests
+2. Update version number
+3. Generate changelog
+4. Create git tag
+5. Publish to npm registry
+6. Update documentation
+7. Deploy Storybook static build
+
+## Development Workflow
+- Use `npm start` for Storybook development
+- Use `npm run build` for full production build
+- Use `npm run format` for code formatting
+- Use `npm run build:tokens` for token-only builds
+- Use `npm run build:browser` for component-only builds
 
 ## Example Build Script Structure
 ```typescript
@@ -95,23 +143,21 @@ async function build() {
 build();
 ```
 
-## Quality Checks
-- Run Prettier formatting before build
-- Validate TypeScript compilation
-- Check for missing exports
-- Verify package.json structure
-- Test bundle integrity
+## Browser Build Process
+```typescript
+// src/scripts/build-browser.ts
+function buildBrowser(): void {
+  const components = extractComponents();
 
-## Performance Considerations
-- Use tree-shaking friendly exports
-- Minimize bundle sizes
-- Avoid including unnecessary dependencies
-- Optimize token generation for large token sets
+  for (const component of components) {
+    buildComponent(component);
+  }
+}
+```
 
-## Publishing Workflow
-1. Run full build and tests
-2. Update version number
-3. Generate changelog
-4. Create git tag
-5. Publish to npm registry
-6. Update documentation
+## Token Generation Process
+- Parse `tokens.json` source file
+- Generate TypeScript modules for each token category
+- Create preset configurations for easy consumption
+- Maintain type safety throughout the process
+- Support hierarchical token relationships
