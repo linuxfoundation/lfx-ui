@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 interface TokenValue {
-  value: any;
+  value: string | number | object;
   type: string;
 }
 
@@ -17,21 +17,21 @@ function generateTokenImports(): string {
   return `import { Token } from './types';\n\n`;
 }
 
-function formatValue(value: any): string {
+function formatValue(value: string | number | object): string {
   if (typeof value === 'string') {
     return `'${value}'`;
   }
   if (typeof value === 'object') {
     return JSON.stringify(value);
   }
-  return value;
+  return String(value);
 }
 
 function generateTokenObject(tokens: TokenGroup, level: string = ''): string {
   let output = '{\n';
 
   for (const [key, value] of Object.entries(tokens)) {
-    if (value.hasOwnProperty('value') && value.hasOwnProperty('type')) {
+    if (Object.prototype.hasOwnProperty.call(value, 'value') && Object.prototype.hasOwnProperty.call(value, 'type')) {
       const tokenValue = value as TokenValue;
       output += `  ${level}'${key}': { value: ${formatValue(tokenValue.value)}, type: '${tokenValue.type}' },\n`;
     } else {

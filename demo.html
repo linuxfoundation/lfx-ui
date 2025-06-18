@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LFX Footer Component Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-section {
+            background: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .demo-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        .event-log {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            min-height: 60px;
+            border-left: 4px solid #0066cc;
+        }
+        .controls {
+            margin: 15px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        .controls label {
+            display: block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .controls input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .controls input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .footer-container {
+            min-height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <h1>LFX Footer Component Demo</h1>
+    <p>This demo page allows you to test the LFX Footer component with different configurations including cookie management support.</p>
+
+    <!-- Default Footer Demo -->
+    <div class="demo-section">
+        <h2>1. Default Footer (No Cookie Management)</h2>
+        <p>Basic footer component without cookie management enabled.</p>
+        <div class="footer-container">
+            <lfx-footer></lfx-footer>
+        </div>
+    </div>
+
+    <!-- Cookie Management Demo -->
+    <div class="demo-section">
+        <h2>2. Footer with Cookie Management (Default Osano Script)</h2>
+        <p>Footer with cookie management enabled using the default Osano script.</p>
+        <div class="event-log">
+            <strong>Event Log:</strong><br />
+            <span id="cookie-log">Waiting for cookie script events...</span>
+        </div>
+        <div class="footer-container">
+            <lfx-footer 
+                cookie-management-enabled
+                id="cookie-footer"></lfx-footer>
+        </div>
+    </div>
+
+    <!-- Custom Script Demo -->
+    <div class="demo-section">
+        <h2>3. Interactive Footer Configuration</h2>
+        <p>Configure and test the footer component with custom settings.</p>
+        
+        <div class="controls">
+            <label>
+                <input type="checkbox" id="enable-cookies" onchange="updateFooter()">
+                Enable Cookie Management
+            </label>
+            <label>
+                Custom Cookie Script URL:
+                <input type="text" id="custom-url" placeholder="https://example.com/custom-script.js" onchange="updateFooter()">
+            </label>
+            <button onclick="recreateFooter()">Recreate Footer</button>
+            <button onclick="clearLog()">Clear Event Log</button>
+        </div>
+
+        <div class="event-log">
+            <strong>Interactive Event Log:</strong><br />
+            <span id="interactive-log">Ready for testing...</span>
+        </div>
+
+        <div class="footer-container" id="interactive-container">
+            <lfx-footer id="interactive-footer"></lfx-footer>
+        </div>
+    </div>
+
+    <!-- Browser Bundle Test -->
+    <div class="demo-section">
+        <h2>4. Browser Bundle Test</h2>
+        <p>Testing footer loaded via the browser bundle (footer.bundle.js).</p>
+        <div id="bundle-status" class="event-log">Loading browser bundle...</div>
+        <div class="footer-container" id="bundle-container">
+            <!-- Footer will be created here via bundle -->
+        </div>
+    </div>
+
+    <!-- Load the component -->
+    <script src="./dist/browser/footer.bundle.js"></script>
+    
+    <script>
+        // Event handling for cookie management footer
+        const cookieFooter = document.getElementById('cookie-footer');
+        const cookieLog = document.getElementById('cookie-log');
+        
+        if (cookieFooter) {
+            cookieFooter.addEventListener('cookie-script-loaded', (e) => {
+                cookieLog.innerHTML = `✅ Cookie script loaded from: ${e.detail.scriptUrl}<br>Timestamp: ${new Date().toLocaleTimeString()}`;
+            });
+            
+            cookieFooter.addEventListener('cookie-script-error', (e) => {
+                cookieLog.innerHTML = `❌ Cookie script failed to load: ${e.detail.error}<br>URL: ${e.detail.scriptUrl}<br>Timestamp: ${new Date().toLocaleTimeString()}`;
+            });
+        }
+
+        // Interactive footer functions
+        function updateFooter() {
+            const footer = document.getElementById('interactive-footer');
+            const enableCookies = document.getElementById('enable-cookies').checked;
+            const customUrl = document.getElementById('custom-url').value.trim();
+            
+            if (footer) {
+                footer.setAttribute('cookie-management-enabled', enableCookies ? 'true' : 'false');
+                if (customUrl) {
+                    footer.setAttribute('custom-cookie-script-url', customUrl);
+                } else {
+                    footer.removeAttribute('custom-cookie-script-url');
+                }
+            }
+        }
+
+        function recreateFooter() {
+            const container = document.getElementById('interactive-container');
+            const oldFooter = document.getElementById('interactive-footer');
+            
+            if (oldFooter) {
+                oldFooter.remove();
+            }
+            
+            const newFooter = document.createElement('lfx-footer');
+            newFooter.id = 'interactive-footer';
+            
+            const enableCookies = document.getElementById('enable-cookies').checked;
+            const customUrl = document.getElementById('custom-url').value.trim();
+            
+            if (enableCookies) {
+                newFooter.setAttribute('cookie-management-enabled', 'true');
+            }
+            if (customUrl) {
+                newFooter.setAttribute('custom-cookie-script-url', customUrl);
+            }
+            
+            // Add event listeners
+            const interactiveLog = document.getElementById('interactive-log');
+            newFooter.addEventListener('cookie-script-loaded', (e) => {
+                interactiveLog.innerHTML += `<br>✅ ${new Date().toLocaleTimeString()}: Script loaded from ${e.detail.scriptUrl}`;
+            });
+            
+            newFooter.addEventListener('cookie-script-error', (e) => {
+                interactiveLog.innerHTML += `<br>❌ ${new Date().toLocaleTimeString()}: Script failed - ${e.detail.error}`;
+            });
+            
+            container.appendChild(newFooter);
+            interactiveLog.innerHTML += `<br>🔄 ${new Date().toLocaleTimeString()}: Footer recreated`;
+        }
+
+        function clearLog() {
+            document.getElementById('interactive-log').innerHTML = 'Ready for testing...';
+        }
+
+        // Test browser bundle
+        document.addEventListener('DOMContentLoaded', () => {
+            const bundleStatus = document.getElementById('bundle-status');
+            const bundleContainer = document.getElementById('bundle-container');
+            
+            try {
+                // Create footer using the bundle
+                const bundleFooter = document.createElement('lfx-footer');
+                bundleFooter.setAttribute('cookie-management-enabled', 'true');
+                bundleContainer.appendChild(bundleFooter);
+                bundleStatus.innerHTML = '✅ Browser bundle loaded successfully!<br>Footer component created via bundle.';
+            } catch (error) {
+                bundleStatus.innerHTML = `❌ Error loading browser bundle: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

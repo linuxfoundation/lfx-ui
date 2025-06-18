@@ -1,0 +1,86 @@
+# Copyright The Linux Foundation and each contributor to LFX.
+# SPDX-License-Identifier: MIT
+
+name: Cookie Management Tests
+
+on:
+  push:
+    branches: [main, feature/LH-2-update-cookie-management]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/components/footer/**'
+      - 'test/unit/cookie-management/**'
+      - 'test/setup.ts'
+      - 'jest.config.js'
+
+jobs:
+  cookie-tests:
+    name: Cookie Management Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cookie Management Tests
+        run: npm run test:cookie
+
+      - name: Test Cookie Script Integration
+        run: npm run test:cookie:browser
+
+  browser-test:
+    name: Browser Bundle Cookie Test
+    runs-on: ubuntu-latest
+    needs: cookie-tests
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Browser Bundle
+        run: npm run build:browser
+
+      - name: Test Browser Bundle Size
+        run: |
+          BUNDLE_SIZE=$(stat -c%s "dist/browser/footer.bundle.js")
+          echo "Browser bundle size: $BUNDLE_SIZE bytes"
+          
+          # Ensure bundle is not too large (reasonable size check)
+          if [ $BUNDLE_SIZE -gt 500000 ]; then
+            echo "❌ Bundle size too large: $BUNDLE_SIZE bytes (max: 500KB)"
+            exit 1
+          fi
+          
+          echo "✅ Bundle size acceptable: $BUNDLE_SIZE bytes"
+
+      - name: Test Bundle Content
+        run: |
+          # Check that the bundle contains cookie management code
+          if grep -q "cookieManagementEnabled" "dist/browser/footer.bundle.js"; then
+            echo "✅ Cookie management code found in bundle"
+          else
+            echo "❌ Cookie management code not found in bundle"
+            exit 1
+          fi
+          
+          if grep -q "osano.js" "dist/browser/footer.bundle.js"; then
+            echo "✅ Osano script URL found in bundle"
+          else
+            echo "❌ Osano script URL not found in bundle"
+            exit 1
+          fi

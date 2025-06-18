@@ -16,3 +16,6 @@ src/design/presets/index.ts
 src/index.ts
 
 .github/.DS_Store
+
+# Ignore the developers local Claude Code permissions
+.claude/

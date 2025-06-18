@@ -1,7 +1,7 @@
 // Copyright The Linux Foundation and each contributor to LFX.
 // SPDX-License-Identifier: MIT
 
-import type { Preview } from '@storybook/web-components';
+import type { Preview } from '@storybook/web-components-vite';
 
 const preview: Preview = {
   parameters: {
