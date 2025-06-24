@@ -55,7 +55,7 @@ export class LFXFooter extends HTMLElement {
     return ['cookie-tracking'];
   }
 
-  attributeChangedCallback(name: string): void {
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (name === 'cookie-tracking' && this._rendered) {
       this._handleCookieTracking();
     }

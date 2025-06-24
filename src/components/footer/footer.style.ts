@@ -78,14 +78,8 @@ export const style = `
 }
 
 .cookie-preferences a:focus {
-
-.cookie-preferences a:focus {
   outline: var(--lfx-footer-link-focus-outline, 2px solid currentColor);
   outline-offset: var(--lfx-footer-link-focus-offset, 2px);
-}
-
-.osano-cm-widget {
-  display: none !important;
 }
 
 /* Responsive adjustments */
