@@ -62,6 +62,32 @@ export const style = `
   outline-offset: var(--lfx-footer-link-focus-offset, 2px);
 }
 
+.cookie-preferences {
+  margin-top: 0.5rem;
+}
+
+.cookie-preferences a {
+  color: var(--lfx-footer-link-color, #5b6367);
+  text-decoration: var(--lfx-footer-link-decoration, none);
+  transition: var(--lfx-footer-link-transition, color 0.2s ease);
+}
+
+.cookie-preferences a:hover {
+  color: var(--lfx-footer-link-hover-color, #5b6367);
+  text-decoration: var(--lfx-footer-link-hover-decoration, underline);
+}
+
+.cookie-preferences a:focus {
+
+.cookie-preferences a:focus {
+  outline: var(--lfx-footer-link-focus-outline, 2px solid currentColor);
+  outline-offset: var(--lfx-footer-link-focus-offset, 2px);
+}
+
+.osano-cm-widget {
+  display: none !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   :host {
