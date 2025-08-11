@@ -19,7 +19,7 @@ declare global {
 /**
  * @element lfx-footer
  * @summary A footer component for LFX applications
- * @description This component provides a consistent footer across LFX applications with optional cookie consent script integration. When cookie tracking is enabled, it includes a "Manage cookie preferences" link that opens the Osano consent management drawer.
+ * @description This component provides a consistent footer across LFX applications with optional cookie consent script integration. When cookie tracking is enabled, it includes a "Manage cookie preferences" link that opens the Osano consent management drawer. The cookie variant can be customized to load different versions of the Osano script.
  * @csspart footer - The main footer element
  * @csspart footer-container - The main container of the footer
  * @csspart footer-content - The content wrapper of the footer
@@ -37,13 +37,14 @@ declare global {
  * @cssproperty --lfx-footer-font-family - Font family of footer text
  *
  * @attr {boolean} cookie-tracking - When true, appends the Osano cookie consent script to the document and shows the "Manage cookie preferences" link
+ * @attr {string} cookie-variant - Optional variant parameter to append to the Osano script URL (e.g., "two", "three"). When not specified, uses the base Osano script URL without any variant parameter. Only takes effect when cookie-tracking is enabled.
  *
  * @fires cookie-script-error - Fired when the cookie consent script fails to load
  */
 export class LFXFooter extends HTMLElement {
   private _template!: HTMLTemplateElement;
   private _rendered = false;
-  private static readonly OSANO_SCRIPT_SRC = 'https://cmp.osano.com/16A0DbT9yDNIaQkvZ/d6ac078e-c71f-4b96-8c97-818cc1cc6632/osano.js?variant=two';
+  private static readonly OSANO_SCRIPT_BASE_URL = 'https://cmp.osano.com/16A0DbT9yDNIaQkvZ/d6ac078e-c71f-4b96-8c97-818cc1cc6632/osano.js';
 
   constructor() {
     super();
@@ -52,12 +53,20 @@ export class LFXFooter extends HTMLElement {
   }
 
   static get observedAttributes(): string[] {
-    return ['cookie-tracking'];
+    return ['cookie-tracking', 'cookie-variant'];
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (name === 'cookie-tracking' && this._rendered) {
       this._handleCookieTracking();
+    } else if (name === 'cookie-variant' && this._rendered) {
+      // If cookie tracking is already enabled, reload the script with the new variant
+      // This allows dynamic variant changes without needing to toggle cookie-tracking
+      const cookieTrackingAttr = this.getAttribute('cookie-tracking');
+      const shouldEnable = cookieTrackingAttr === 'true' || cookieTrackingAttr === '';
+      if (shouldEnable) {
+        this._handleCookieTracking();
+      }
     }
   }
 
@@ -142,11 +151,24 @@ export class LFXFooter extends HTMLElement {
       return;
     }
 
+    // Build the script URL with optional variant parameter
+    // If cookie-variant attribute is provided, append it as a query parameter
+    // Otherwise, use the base URL without any variant
+    const variant = this.getAttribute('cookie-variant');
+    const scriptUrl = variant 
+      ? `${LFXFooter.OSANO_SCRIPT_BASE_URL}?variant=${variant}`
+      : LFXFooter.OSANO_SCRIPT_BASE_URL;
+
     // Check if the script already exists to prevent duplicates
-    const existingScript = document.querySelector(`script[src="${LFXFooter.OSANO_SCRIPT_SRC}"]`);
+    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
     if (existingScript) {
       return;
     }
+
+    // Remove any existing Osano scripts with different URLs to prevent conflicts
+    // This ensures we don't have multiple Osano scripts with different variants loaded
+    const existingOsanoScripts = document.querySelectorAll(`script[src*="${LFXFooter.OSANO_SCRIPT_BASE_URL}"]`);
+    existingOsanoScripts.forEach(script => script.remove());
 
     // Add Osano initialization script first
     const initScript = document.createElement('script');
@@ -171,7 +193,7 @@ window.Osano('onInitialized', function(consent) {
 
     // Create and append the main Osano script
     const script = document.createElement('script');
-    script.src = LFXFooter.OSANO_SCRIPT_SRC;
+    script.src = scriptUrl;
     script.async = true;
 
     // Add error handling
@@ -182,7 +204,7 @@ window.Osano('onInitialized', function(consent) {
         new CustomEvent('cookie-script-error', {
           bubbles: true,
           detail: {
-            scriptSrc: LFXFooter.OSANO_SCRIPT_SRC,
+            scriptSrc: scriptUrl,
             error: 'Script failed to load',
           },
         })
