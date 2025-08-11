@@ -159,20 +159,23 @@ export class LFXFooter extends HTMLElement {
       ? `${LFXFooter.OSANO_SCRIPT_BASE_URL}?variant=${variant}`
       : LFXFooter.OSANO_SCRIPT_BASE_URL;
 
-    // Check if the script already exists to prevent duplicates
+    // Check if the exact script we want already exists
     const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
     if (existingScript) {
-      return;
+      return; // Script with correct variant already loaded, nothing to do
     }
 
     // Remove any existing Osano scripts with different URLs to prevent conflicts
-    // This ensures we don't have multiple Osano scripts with different variants loaded
+    // Only remove if they exist and have different URLs than what we want to load
     const existingOsanoScripts = document.querySelectorAll(`script[src*="${LFXFooter.OSANO_SCRIPT_BASE_URL}"]`);
     existingOsanoScripts.forEach(script => script.remove());
 
-    // Add Osano initialization script first
-    const initScript = document.createElement('script');
-    initScript.textContent = `
+    // Add Osano initialization script first (only if it doesn't already exist)
+    const existingInitScript = document.querySelector('script[data-osano-init="true"]');
+    if (!existingInitScript) {
+      const initScript = document.createElement('script');
+      initScript.setAttribute('data-osano-init', 'true');
+      initScript.textContent = `
 (function (w, o, d) {
     w[o] =
         w[o] ||
@@ -189,7 +192,15 @@ window.Osano('onInitialized', function(consent) {
     style.textContent = '.osano-cm-widget {display: none !important;}';
     document.head.appendChild(style);
 });
-    `;
+      `;
+
+      // Append the init script to document
+      if (document.head) {
+        document.head.appendChild(initScript);
+      } else {
+        document.body?.appendChild(initScript);
+      }
+    }
 
     // Create and append the main Osano script
     const script = document.createElement('script');
@@ -211,12 +222,10 @@ window.Osano('onInitialized', function(consent) {
       );
     };
 
-    // Append both scripts to the document
+    // Append the main script to the document
     if (document.head) {
-      document.head.appendChild(initScript);
       document.head.appendChild(script);
     } else {
-      document.body?.appendChild(initScript);
       document.body?.appendChild(script);
     }
   }
