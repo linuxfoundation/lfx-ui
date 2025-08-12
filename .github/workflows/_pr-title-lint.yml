@@ -25,3 +25,5 @@ jobs:
           title-regex: '^(?:revert:\s*)?(build|chore|ci|docs|feat|fix|perf|refactor|style|test)(?:\([a-z0-9\-./, ]+\))?(?:!)?: [a-z][a-z0-9 -~]*[^.\s]$'
           on-failed-regex-comment: 'PR titles must follow [Conventional Commits](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md). Love from, Your reviewers ❤️.'
           on-succeeded-regex-dismiss-review-comment: 'Conventional Commits FTW!'
+          on-failed-regex-request-changes: false
+          on-failed-regex-fail-action: true
