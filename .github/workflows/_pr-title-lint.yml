@@ -22,6 +22,6 @@ jobs:
           # https://docs.github.com/en/rest/pulls/reviews#dismiss-a-review-for-a-pull-request
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           # For the meaning of -~, see https://catonmat.net/my-favorite-regex
-          title-regex: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z ]+\))?: [a-z][a-z0-9 -~]*[^.]\s*$'
+          title-regex: '^(?:revert:\s*)?(build|chore|ci|docs|feat|fix|perf|refactor|style|test)(?:\([a-z0-9\-./, ]+\))?(?:!)?: [a-z][a-z0-9 -~]*[^.\s]$'
           on-failed-regex-comment: 'PR titles must follow [Conventional Commits](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md). Love from, Your reviewers ❤️.'
           on-succeeded-regex-dismiss-review-comment: 'Conventional Commits FTW!'
