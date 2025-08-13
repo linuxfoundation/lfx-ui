@@ -155,9 +155,7 @@ export class LFXFooter extends HTMLElement {
     // If cookie-variant attribute is provided, append it as a query parameter
     // Otherwise, use the base URL without any variant
     const variant = this.getAttribute('cookie-variant');
-    const scriptUrl = variant 
-      ? `${LFXFooter.OSANO_SCRIPT_BASE_URL}?variant=${variant}`
-      : LFXFooter.OSANO_SCRIPT_BASE_URL;
+    const scriptUrl = variant ? `${LFXFooter.OSANO_SCRIPT_BASE_URL}?variant=${variant}` : LFXFooter.OSANO_SCRIPT_BASE_URL;
 
     // Check if the exact script we want already exists
     const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
@@ -168,7 +166,7 @@ export class LFXFooter extends HTMLElement {
     // Remove any existing Osano scripts with different URLs to prevent conflicts
     // Only remove if they exist and have different URLs than what we want to load
     const existingOsanoScripts = document.querySelectorAll(`script[src*="${LFXFooter.OSANO_SCRIPT_BASE_URL}"]`);
-    existingOsanoScripts.forEach(script => script.remove());
+    existingOsanoScripts.forEach((script) => script.remove());
 
     // Add Osano initialization script first (only if it doesn't already exist)
     const existingInitScript = document.querySelector('script[data-osano-init="true"]');

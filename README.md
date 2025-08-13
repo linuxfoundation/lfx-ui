@@ -43,7 +43,7 @@ npm install @linuxfoundation/lfx-ui-core
 
 ```bash
 git clone https://github.com/linuxfoundation/lfx-ui
-cd lfx-ui-core
+cd lfx-ui
 ```
 
 2. Install dependencies:
