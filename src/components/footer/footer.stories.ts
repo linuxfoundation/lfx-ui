@@ -111,11 +111,7 @@ Plus many more for advanced customization including responsive and accessibility
     const cookieVariant = args['cookie-variant'];
     return html`
       <div>
-        <lfx-footer 
-          style="${styles}" 
-          ?cookie-tracking="${args['cookie-tracking']}" 
-          cookie-variant="${cookieVariant || ''}"
-        ></lfx-footer>
+        <lfx-footer style="${styles}" ?cookie-tracking="${args['cookie-tracking']}" cookie-variant="${cookieVariant || ''}"></lfx-footer>
       </div>
     `;
   },
