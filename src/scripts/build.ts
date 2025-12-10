@@ -61,12 +61,42 @@ export const semanticTokens = ${generateTokenObject(semanticTokens as TokenGroup
 export type SemanticTokens = typeof semanticTokens;`;
 }
 
+function mergeColorSchemeTokens(tokens: TokenGroup): TokenGroup {
+  const baseTokens = (tokens['aura/component'] as TokenGroup) || {};
+  const lightTokens = (tokens['aura/component/light'] as TokenGroup) || {};
+  const darkTokens = (tokens['aura/component/dark'] as TokenGroup) || {};
+
+  // Get all unique component names from all three sources
+  const allComponentNames = new Set([...Object.keys(baseTokens), ...Object.keys(lightTokens), ...Object.keys(darkTokens)]);
+
+  const mergedTokens: TokenGroup = {};
+
+  for (const componentName of allComponentNames) {
+    const baseComponent = (baseTokens[componentName] as TokenGroup) || {};
+    const lightComponent = lightTokens[componentName];
+    const darkComponent = darkTokens[componentName];
+
+    // Start with base tokens
+    mergedTokens[componentName] = { ...baseComponent };
+
+    // Add colorScheme if light or dark tokens exist
+    if (lightComponent || darkComponent) {
+      (mergedTokens[componentName] as TokenGroup)['colorScheme'] = {
+        ...(lightComponent ? { light: lightComponent } : {}),
+        ...(darkComponent ? { dark: darkComponent } : {}),
+      };
+    }
+  }
+
+  return mergedTokens;
+}
+
 function generateComponentTokens(tokens: TokenGroup): string {
-  const componentTokens = tokens['aura/component'];
+  const mergedTokens = mergeColorSchemeTokens(tokens);
   return `${generateTokenImports()}
 import { semanticTokens } from './semantic.tokens';
 
-export const componentTokens = ${generateTokenObject(componentTokens as TokenGroup)} as const;
+export const componentTokens = ${generateTokenObject(mergedTokens)} as const;
 
 export type ComponentTokens = typeof componentTokens;`;
 }
