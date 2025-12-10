@@ -8,6 +8,10 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   release:
     name: Release to NPM
@@ -38,6 +42,4 @@ jobs:
           npm version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version --allow-same-version
 
       - name: Publish to NPM
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
