@@ -6,6 +6,10 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "author": "The Linux Foundation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/linuxfoundation/lfx-ui"
+  },
   "scripts": {
     "build:tokens": "ts-node src/scripts/build.ts",
     "build:browser": "ts-node src/scripts/build-browser.ts",
