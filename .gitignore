@@ -7,9 +7,9 @@
 **/coverage
 **/storybook-static
 
-src/design/tokens/component.tokens.ts
 src/design/tokens/primitive.tokens.ts
 src/design/tokens/semantic.tokens.ts
+src/design/tokens/component.tokens.ts
 
 src/design/presets/lfx.preset.ts
 src/design/presets/index.ts

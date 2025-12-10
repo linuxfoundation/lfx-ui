@@ -48,6 +48,46 @@ export const lfxComponentTokens = {
             borderColor: 'transparent',
           },
         },
+        success: {
+          background: '{emerald.500}',
+          color: '#fff',
+          borderColor: 'transparent',
+          hover: {
+            background: '{emerald.700}',
+            color: '#fff',
+            borderColor: 'transparent',
+          },
+        },
+        info: {
+          background: '{blue.500}',
+          color: '#fff',
+          borderColor: 'transparent',
+          hover: {
+            background: '{blue.700}',
+            color: '#fff',
+            borderColor: 'transparent',
+          },
+        },
+        warn: {
+          background: '{amber.500}',
+          color: '#fff',
+          borderColor: 'transparent',
+          hover: {
+            background: '{amber.700}',
+            color: '#fff',
+            borderColor: 'transparent',
+          },
+        },
+        danger: {
+          background: '{red.500}',
+          color: '#fff',
+          borderColor: 'transparent',
+          hover: {
+            background: '{red.700}',
+            color: '#fff',
+            borderColor: 'transparent',
+          },
+        },
       },
     },
   },
@@ -75,6 +115,36 @@ export const lfxComponentTokens = {
     },
     colorScheme: {
       background: 'transparent',
+      light: {
+        success: {
+          background: '{emerald.100}',
+          color: '{emerald.900}',
+          border: {
+            color: '{emerald.300}',
+          },
+        },
+        info: {
+          background: '{blue.100}',
+          color: '{blue.900}',
+          border: {
+            color: '{blue.300}',
+          },
+        },
+        warn: {
+          background: '{amber.100}',
+          color: '{amber.900}',
+          border: {
+            color: '{amber.300}',
+          },
+        },
+        danger: {
+          background: '{red.100}',
+          color: '{red.900}',
+          border: {
+            color: '{red.300}',
+          },
+        },
+      },
     },
   },
   datatable: {
