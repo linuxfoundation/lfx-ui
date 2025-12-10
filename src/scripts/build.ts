@@ -13,6 +13,37 @@ interface TokenGroup {
   [key: string]: TokenValue | TokenGroup;
 }
 
+// Required token sections that must exist in tokens.json
+const REQUIRED_SECTIONS = ['aura/primitive', 'aura/semantic', 'aura/component'] as const;
+const OPTIONAL_SECTIONS = ['aura/component/light', 'aura/component/dark'] as const;
+
+function isTokenGroup(value: unknown): value is TokenGroup {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function validateTokenStructure(tokens: unknown): asserts tokens is TokenGroup {
+  if (!isTokenGroup(tokens)) {
+    throw new Error('tokens.json must contain a valid JSON object');
+  }
+
+  // Validate required sections exist and are valid objects
+  for (const section of REQUIRED_SECTIONS) {
+    if (!(section in tokens)) {
+      throw new Error(`Missing required section: "${section}" in tokens.json`);
+    }
+    if (!isTokenGroup(tokens[section])) {
+      throw new Error(`Section "${section}" must be a valid object, got ${typeof tokens[section]}`);
+    }
+  }
+
+  // Validate optional sections if they exist
+  for (const section of OPTIONAL_SECTIONS) {
+    if (section in tokens && !isTokenGroup(tokens[section])) {
+      throw new Error(`Section "${section}" must be a valid object if present, got ${typeof tokens[section]}`);
+    }
+  }
+}
+
 function generateTokenImports(): string {
   return `import { Token } from './types';\n\n`;
 }
@@ -61,30 +92,73 @@ export const semanticTokens = ${generateTokenObject(semanticTokens as TokenGroup
 export type SemanticTokens = typeof semanticTokens;`;
 }
 
+function deepMerge(target: TokenGroup, source: TokenGroup): TokenGroup {
+  const result = { ...target };
+
+  for (const key of Object.keys(source)) {
+    const sourceValue = source[key];
+    const targetValue = result[key];
+
+    // If both are token groups (objects without value/type), merge recursively
+    if (isTokenGroup(sourceValue) && isTokenGroup(targetValue) && !('value' in sourceValue) && !('value' in targetValue)) {
+      result[key] = deepMerge(targetValue as TokenGroup, sourceValue as TokenGroup);
+    } else {
+      // Otherwise, source overwrites target
+      result[key] = sourceValue;
+    }
+  }
+
+  return result;
+}
+
 function mergeColorSchemeTokens(tokens: TokenGroup): TokenGroup {
-  const baseTokens = (tokens['aura/component'] as TokenGroup) || {};
-  const lightTokens = (tokens['aura/component/light'] as TokenGroup) || {};
-  const darkTokens = (tokens['aura/component/dark'] as TokenGroup) || {};
+  const baseTokens = tokens['aura/component'];
+  const lightTokens = tokens['aura/component/light'];
+  const darkTokens = tokens['aura/component/dark'];
+
+  // Validation already ensures baseTokens exists and is valid
+  if (!isTokenGroup(baseTokens)) {
+    throw new Error('aura/component section is invalid or missing');
+  }
 
   // Get all unique component names from all three sources
-  const allComponentNames = new Set([...Object.keys(baseTokens), ...Object.keys(lightTokens), ...Object.keys(darkTokens)]);
+  const allComponentNames = new Set([
+    ...Object.keys(baseTokens),
+    ...(isTokenGroup(lightTokens) ? Object.keys(lightTokens) : []),
+    ...(isTokenGroup(darkTokens) ? Object.keys(darkTokens) : []),
+  ]);
 
   const mergedTokens: TokenGroup = {};
 
   for (const componentName of allComponentNames) {
-    const baseComponent = (baseTokens[componentName] as TokenGroup) || {};
-    const lightComponent = lightTokens[componentName];
-    const darkComponent = darkTokens[componentName];
+    const baseComponent = baseTokens[componentName];
+    const lightComponent = isTokenGroup(lightTokens) ? lightTokens[componentName] : undefined;
+    const darkComponent = isTokenGroup(darkTokens) ? darkTokens[componentName] : undefined;
 
-    // Start with base tokens
-    mergedTokens[componentName] = { ...baseComponent };
+    // Start with base tokens (or empty object if component only exists in colorScheme)
+    mergedTokens[componentName] = isTokenGroup(baseComponent) ? { ...baseComponent } : {};
 
-    // Add colorScheme if light or dark tokens exist
+    // Build colorScheme from light/dark tokens
     if (lightComponent || darkComponent) {
-      (mergedTokens[componentName] as TokenGroup)['colorScheme'] = {
-        ...(lightComponent ? { light: lightComponent } : {}),
-        ...(darkComponent ? { dark: darkComponent } : {}),
+      if (!isTokenGroup(lightComponent) && lightComponent !== undefined) {
+        console.warn(`Warning: ${componentName} in aura/component/light is not a valid token group`);
+      }
+      if (!isTokenGroup(darkComponent) && darkComponent !== undefined) {
+        console.warn(`Warning: ${componentName} in aura/component/dark is not a valid token group`);
+      }
+
+      const newColorScheme: TokenGroup = {
+        ...(isTokenGroup(lightComponent) ? { light: lightComponent } : {}),
+        ...(isTokenGroup(darkComponent) ? { dark: darkComponent } : {}),
       };
+
+      // Deep merge with existing colorScheme if present (preserves base colorScheme properties)
+      const existingColorScheme = (mergedTokens[componentName] as TokenGroup)['colorScheme'];
+      if (isTokenGroup(existingColorScheme)) {
+        (mergedTokens[componentName] as TokenGroup)['colorScheme'] = deepMerge(existingColorScheme as TokenGroup, newColorScheme);
+      } else {
+        (mergedTokens[componentName] as TokenGroup)['colorScheme'] = newColorScheme;
+      }
     }
   }
 
@@ -130,7 +204,19 @@ async function buildTokens() {
 
     // Read tokens.json
     const tokensPath = path.resolve(__dirname, '../design/tokens/tokens.json');
-    const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
+    if (!fs.existsSync(tokensPath)) {
+      throw new Error(`tokens.json not found at ${tokensPath}`);
+    }
+
+    let tokens: unknown;
+    try {
+      tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
+    } catch (parseError) {
+      throw new Error(`Failed to parse tokens.json: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+    }
+
+    // Validate token structure before processing
+    validateTokenStructure(tokens);
 
     // Generate token files
     const outputDir = path.resolve(__dirname, '../design/tokens');

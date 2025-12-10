@@ -137,7 +137,7 @@ export const lfxComponentTokens = {
             color: '{amber.300}',
           },
         },
-        danger: {
+        error: {
           background: '{red.100}',
           color: '{red.900}',
           border: {
