@@ -13,15 +13,93 @@ interface TokenGroup {
   [key: string]: TokenValue | TokenGroup;
 }
 
+// Required token sections that must exist in tokens.json
+const REQUIRED_SECTIONS = ['aura/primitive', 'aura/semantic', 'aura/component'] as const;
+const OPTIONAL_SECTIONS = ['aura/semantic/light', 'aura/semantic/dark', 'aura/component/light', 'aura/component/dark'] as const;
+
+function isTokenGroup(value: unknown): value is TokenGroup {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function validateTokenStructure(tokens: unknown): asserts tokens is TokenGroup {
+  if (!isTokenGroup(tokens)) {
+    throw new Error('tokens.json must contain a valid JSON object');
+  }
+
+  // Validate required sections exist and are valid objects
+  for (const section of REQUIRED_SECTIONS) {
+    if (!(section in tokens)) {
+      throw new Error(`Missing required section: "${section}" in tokens.json`);
+    }
+    if (!isTokenGroup(tokens[section])) {
+      throw new Error(`Section "${section}" must be a valid object, got ${typeof tokens[section]}`);
+    }
+  }
+
+  // Validate optional sections if they exist
+  for (const section of OPTIONAL_SECTIONS) {
+    if (section in tokens && !isTokenGroup(tokens[section])) {
+      throw new Error(`Section "${section}" must be a valid object if present, got ${typeof tokens[section]}`);
+    }
+  }
+}
+
 function generateTokenImports(): string {
   return `import { Token } from './types';\n\n`;
 }
 
-function formatValue(value: any): string {
+interface ShadowValue {
+  x: string | number;
+  y: string | number;
+  blur: string | number;
+  spread: string | number;
+  color: string;
+  type: 'dropShadow' | 'innerShadow';
+}
+
+function isShadowValue(value: unknown): value is ShadowValue {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'x' in value &&
+    'y' in value &&
+    'blur' in value &&
+    'spread' in value &&
+    'color' in value &&
+    'type' in value &&
+    ((value as ShadowValue).type === 'dropShadow' || (value as ShadowValue).type === 'innerShadow')
+  );
+}
+
+function shadowToCSS(shadow: ShadowValue): string {
+  const { x, y, blur, spread, color, type } = shadow;
+  const inset = type === 'innerShadow' ? 'inset ' : '';
+  // Add 'px' suffix only if value is numeric and not zero
+  const formatUnit = (val: string | number): string => {
+    const num = typeof val === 'string' ? parseFloat(val) : val;
+    return num === 0 ? '0' : `${num}px`;
+  };
+  return `${inset}${formatUnit(x)} ${formatUnit(y)} ${formatUnit(blur)} ${formatUnit(spread)} ${color}`;
+}
+
+function formatValue(value: any, tokenType?: string): string {
   if (typeof value === 'string') {
     return `'${value}'`;
   }
   if (typeof value === 'object') {
+    // Handle boxShadow tokens - convert to CSS string
+    if (tokenType === 'boxShadow') {
+      // Single shadow
+      if (isShadowValue(value)) {
+        return `'${shadowToCSS(value)}'`;
+      }
+      // Array of shadows (layered)
+      if (Array.isArray(value) && value.every(isShadowValue)) {
+        const cssValue = value.map(shadowToCSS).join(', ');
+        return `'${cssValue}'`;
+      }
+    }
+    // Default: stringify as JSON
     return JSON.stringify(value);
   }
   return value;
@@ -33,7 +111,9 @@ function generateTokenObject(tokens: TokenGroup, level: string = ''): string {
   for (const [key, value] of Object.entries(tokens)) {
     if (value.hasOwnProperty('value') && value.hasOwnProperty('type')) {
       const tokenValue = value as TokenValue;
-      output += `  ${level}'${key}': { value: ${formatValue(tokenValue.value)}, type: '${tokenValue.type}' },\n`;
+      // Output W3C Design Tokens format with $value and $type
+      // Pass token type to formatValue for type-specific transformations (e.g., boxShadow)
+      output += `  ${level}'${key}': { $value: ${formatValue(tokenValue.value, tokenValue.type)}, $type: '${tokenValue.type}' },\n`;
     } else {
       output += `  ${level}'${key}': ${generateTokenObject(value as TokenGroup, level + '  ')},\n`;
     }
@@ -51,8 +131,31 @@ export const primitiveTokens = ${generateTokenObject(primitiveTokens as TokenGro
 export type PrimitiveTokens = typeof primitiveTokens;`;
 }
 
+function mergeSemanticColorSchemeTokens(tokens: TokenGroup): TokenGroup {
+  const baseTokens = tokens['aura/semantic'];
+  const lightTokens = tokens['aura/semantic/light'];
+  const darkTokens = tokens['aura/semantic/dark'];
+
+  if (!isTokenGroup(baseTokens)) {
+    throw new Error('aura/semantic section is invalid or missing');
+  }
+
+  // Start with base semantic tokens
+  const mergedTokens: TokenGroup = { ...baseTokens };
+
+  // Add colorScheme with light and dark sections if they exist
+  if (lightTokens || darkTokens) {
+    mergedTokens['colorScheme'] = {
+      light: isTokenGroup(lightTokens) ? lightTokens : {},
+      dark: isTokenGroup(darkTokens) ? darkTokens : {},
+    };
+  }
+
+  return mergedTokens;
+}
+
 function generateSemanticTokens(tokens: TokenGroup): string {
-  const semanticTokens = tokens['aura/semantic'];
+  const semanticTokens = mergeSemanticColorSchemeTokens(tokens);
   return `${generateTokenImports()}
 import { primitiveTokens } from './primitive.tokens';
 
@@ -61,12 +164,85 @@ export const semanticTokens = ${generateTokenObject(semanticTokens as TokenGroup
 export type SemanticTokens = typeof semanticTokens;`;
 }
 
+function deepMerge(target: TokenGroup, source: TokenGroup): TokenGroup {
+  const result = { ...target };
+
+  for (const key of Object.keys(source)) {
+    const sourceValue = source[key];
+    const targetValue = result[key];
+
+    // If both are token groups (objects without value/type), merge recursively
+    if (isTokenGroup(sourceValue) && isTokenGroup(targetValue) && !('value' in sourceValue) && !('value' in targetValue)) {
+      result[key] = deepMerge(targetValue as TokenGroup, sourceValue as TokenGroup);
+    } else {
+      // Otherwise, source overwrites target
+      result[key] = sourceValue;
+    }
+  }
+
+  return result;
+}
+
+function mergeColorSchemeTokens(tokens: TokenGroup): TokenGroup {
+  const baseTokens = tokens['aura/component'];
+  const lightTokens = tokens['aura/component/light'];
+  const darkTokens = tokens['aura/component/dark'];
+
+  // Validation already ensures baseTokens exists and is valid
+  if (!isTokenGroup(baseTokens)) {
+    throw new Error('aura/component section is invalid or missing');
+  }
+
+  // Get all unique component names from all three sources
+  const allComponentNames = new Set([
+    ...Object.keys(baseTokens),
+    ...(isTokenGroup(lightTokens) ? Object.keys(lightTokens) : []),
+    ...(isTokenGroup(darkTokens) ? Object.keys(darkTokens) : []),
+  ]);
+
+  const mergedTokens: TokenGroup = {};
+
+  for (const componentName of allComponentNames) {
+    const baseComponent = baseTokens[componentName];
+    const lightComponent = isTokenGroup(lightTokens) ? lightTokens[componentName] : undefined;
+    const darkComponent = isTokenGroup(darkTokens) ? darkTokens[componentName] : undefined;
+
+    // Start with base tokens (or empty object if component only exists in colorScheme)
+    mergedTokens[componentName] = isTokenGroup(baseComponent) ? { ...baseComponent } : {};
+
+    // Build colorScheme from light/dark tokens
+    if (lightComponent || darkComponent) {
+      if (!isTokenGroup(lightComponent) && lightComponent !== undefined) {
+        console.warn(`Warning: ${componentName} in aura/component/light is not a valid token group`);
+      }
+      if (!isTokenGroup(darkComponent) && darkComponent !== undefined) {
+        console.warn(`Warning: ${componentName} in aura/component/dark is not a valid token group`);
+      }
+
+      const newColorScheme: TokenGroup = {
+        ...(isTokenGroup(lightComponent) ? { light: lightComponent } : {}),
+        ...(isTokenGroup(darkComponent) ? { dark: darkComponent } : {}),
+      };
+
+      // Deep merge with existing colorScheme if present (preserves base colorScheme properties)
+      const existingColorScheme = (mergedTokens[componentName] as TokenGroup)['colorScheme'];
+      if (isTokenGroup(existingColorScheme)) {
+        (mergedTokens[componentName] as TokenGroup)['colorScheme'] = deepMerge(existingColorScheme as TokenGroup, newColorScheme);
+      } else {
+        (mergedTokens[componentName] as TokenGroup)['colorScheme'] = newColorScheme;
+      }
+    }
+  }
+
+  return mergedTokens;
+}
+
 function generateComponentTokens(tokens: TokenGroup): string {
-  const componentTokens = tokens['aura/component'];
+  const mergedTokens = mergeColorSchemeTokens(tokens);
   return `${generateTokenImports()}
 import { semanticTokens } from './semantic.tokens';
 
-export const componentTokens = ${generateTokenObject(componentTokens as TokenGroup)} as const;
+export const componentTokens = ${generateTokenObject(mergedTokens)} as const;
 
 export type ComponentTokens = typeof componentTokens;`;
 }
@@ -100,7 +276,19 @@ async function buildTokens() {
 
     // Read tokens.json
     const tokensPath = path.resolve(__dirname, '../design/tokens/tokens.json');
-    const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
+    if (!fs.existsSync(tokensPath)) {
+      throw new Error(`tokens.json not found at ${tokensPath}`);
+    }
+
+    let tokens: unknown;
+    try {
+      tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
+    } catch (parseError) {
+      throw new Error(`Failed to parse tokens.json: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+    }
+
+    // Validate token structure before processing
+    validateTokenStructure(tokens);
 
     // Generate token files
     const outputDir = path.resolve(__dirname, '../design/tokens');
