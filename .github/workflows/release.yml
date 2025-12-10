@@ -8,6 +8,10 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   release:
     name: Release to NPM
