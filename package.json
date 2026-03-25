@@ -30,6 +30,7 @@
     "@storybook/blocks": "^8.4.5",
     "@storybook/web-components": "^8.4.5",
     "@storybook/web-components-vite": "^8.4.5",
+    "@types/dompurify": "^3.0.5",
     "@types/node": "^20.0.0",
     "@types/prettier": "3.0.0",
     "browserify": "^17.0.0",
@@ -67,5 +68,9 @@
       "import": "./dist/core/prettier-config/index.js",
       "require": "./dist/core/prettier-config/index.js"
     }
+  },
+  "dependencies": {
+    "dompurify": "^3.3.3",
+    "marked": "^17.0.5"
   }
 }

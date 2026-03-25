@@ -4,6 +4,34 @@ This document provides an overview of all available components in the LFX UI Cor
 
 ## Available Components
 
+### Changelog Component (`lfx-changelog`)
+
+An embeddable changelog widget that fetches and displays published changelog entries for LFX products with markdown rendering and theme support.
+
+**Key Features:**
+
+- **Product Filtering**: Show changelogs for a specific product via the `product` attribute
+- **Light/Dark Theme**: Toggle with the `theme` attribute
+- **Markdown Rendering**: Full GFM markdown with XSS protection (DOMPurify)
+- **Loading States**: Skeleton animation, error with retry, empty states
+- **CSS Custom Properties**: Full theming via `--lfx-changelog-*` properties
+- **CSS Parts**: Fine-grained styling with `::part()` selectors
+
+**Usage:**
+
+```html
+<!-- Basic usage -->
+<lfx-changelog product="easycla"></lfx-changelog>
+
+<!-- With dark theme and limit -->
+<lfx-changelog product="easycla" theme="dark" limit="5"></lfx-changelog>
+
+<!-- With custom API URL -->
+<lfx-changelog product="insights" base-url="https://changelog.lfx.dev"></lfx-changelog>
+```
+
+**Documentation:** [Changelog Component](changelog.md)
+
 ### Footer Component (`lfx-footer`)
 
 A comprehensive footer component that provides consistent copyright and legal information across LFX applications.
@@ -60,15 +88,18 @@ A tools menu component that provides a grid icon button that opens a dropdown me
 
 ## Component Features Overview
 
-| Feature               | Footer | Tools |
-| --------------------- | ------ | ----- |
-| Cookie Tracking       | ✅     | ❌    |
-| CSS Custom Properties | ✅     | ✅    |
-| CSS Parts             | ✅     | ✅    |
-| Accessibility         | ✅     | ✅    |
-| Responsive Design     | ✅     | ✅    |
-| Framework Agnostic    | ✅     | ✅    |
-| TypeScript Support    | ✅     | ✅    |
+| Feature               | Changelog | Footer | Tools |
+| --------------------- | --------- | ------ | ----- |
+| API Data Fetching     | ✅        | ❌     | ❌    |
+| Markdown Rendering    | ✅        | ❌     | ❌    |
+| Light/Dark Theme      | ✅        | ❌     | ❌    |
+| Cookie Tracking       | ❌        | ✅     | ❌    |
+| CSS Custom Properties | ✅        | ✅     | ✅    |
+| CSS Parts             | ✅        | ✅     | ✅    |
+| Accessibility         | ✅        | ✅     | ✅    |
+| Responsive Design     | ✅        | ✅     | ✅    |
+| Framework Agnostic    | ✅        | ✅     | ✅    |
+| TypeScript Support    | ✅        | ✅     | ✅    |
 
 ## Installation and Setup
 
@@ -85,6 +116,7 @@ npm install @linuxfoundation/lfx-ui-core
 import '@linuxfoundation/lfx-ui-core';
 
 // Or import individual components
+import '@linuxfoundation/lfx-ui-core/dist/components/changelog';
 import '@linuxfoundation/lfx-ui-core/dist/components/footer';
 import '@linuxfoundation/lfx-ui-core/dist/components/tools';
 ```
