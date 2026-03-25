@@ -61,7 +61,6 @@ An embeddable changelog widget for LFX products. Fetches and displays published 
 
 ## Required Attributes
 - \`product\` — Product slug to filter changelogs
-- \`base-url\` — API base URL for the changelog service
 
 ## Available Product Slugs
 \`changelog\`, \`community-data-platform\`, \`crowdfunding\`, \`easycla\`, \`individual-dashboard\`, \`insights\`, \`mentorship\`, \`organization-dashboard\`, \`project-control-center\`

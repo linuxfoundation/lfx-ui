@@ -115,10 +115,8 @@ npm install @linuxfoundation/lfx-ui-core
 // Import all components
 import '@linuxfoundation/lfx-ui-core';
 
-// Or import individual components
-import '@linuxfoundation/lfx-ui-core/dist/components/changelog';
-import '@linuxfoundation/lfx-ui-core/dist/components/footer';
-import '@linuxfoundation/lfx-ui-core/dist/components/tools';
+// Or import components module (includes changelog, footer, tools)
+import '@linuxfoundation/lfx-ui-core/components';
 ```
 
 ### Framework Integration

@@ -38,10 +38,10 @@ export interface ChangelogApiResponse {
 export interface LFXChangelogAttributes {
   /** Product slug to filter changelogs (required) */
   product: string;
-  /** Color theme — "light" or "dark" */
-  theme: 'light' | 'dark';
+  /** Color theme — "light" (default) or "dark" */
+  theme?: 'light' | 'dark';
   /** Maximum number of entries to show (1–25, default 10) */
-  limit: number;
+  limit?: number;
   /** Override the API base URL (defaults to https://changelog.lfx.dev) */
-  'base-url': string;
+  'base-url'?: string;
 }

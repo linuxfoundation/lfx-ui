@@ -31,7 +31,6 @@ export const style = `
   --lfx-changelog-border-radius: 12px;
   --lfx-changelog-border-radius-sm: 6px;
   --lfx-changelog-card-padding: 20px;
-  --lfx-changelog-card-gap: 16px;
 
   font-family: var(--lfx-changelog-font-family);
   font-size: var(--lfx-changelog-font-size-base);

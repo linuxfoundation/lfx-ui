@@ -49,7 +49,6 @@ const MAX_LIMIT = 25;
  * @cssproperty --lfx-changelog-accent-bg - Accent background color
  * @cssproperty --lfx-changelog-border-radius - Card border radius
  * @cssproperty --lfx-changelog-card-padding - Card padding
- * @cssproperty --lfx-changelog-card-gap - Gap between cards
  *
  * @attr {string} product - Product slug to filter changelogs (required)
  * @attr {string} theme - Color theme: "light" (default) or "dark"
@@ -62,6 +61,7 @@ export class LFXChangelog extends HTMLElement {
   private _rendered = false;
   private _abortController: AbortController | null = null;
   private _containerElement!: HTMLDivElement;
+  private _retryHandler: (() => void) | null = null;
 
   static get observedAttributes(): string[] {
     return ['product', 'theme', 'limit', 'base-url'];
@@ -118,6 +118,7 @@ export class LFXChangelog extends HTMLElement {
   disconnectedCallback(): void {
     this._abortController?.abort();
     this._abortController = null;
+    this._cleanupRetryListener();
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
@@ -197,7 +198,16 @@ export class LFXChangelog extends HTMLElement {
     this._containerElement.appendChild(renderFooter(this.baseUrl));
   }
 
+  private _cleanupRetryListener(): void {
+    if (this._retryHandler) {
+      const retryBtn = this._containerElement?.querySelector('.lfx-changelog-retry-btn');
+      retryBtn?.removeEventListener('click', this._retryHandler);
+      this._retryHandler = null;
+    }
+  }
+
   private _showError(message: string): void {
+    this._cleanupRetryListener();
     this._clearContainer();
     this._containerElement.appendChild(renderHeader("What's New"));
 
@@ -205,7 +215,8 @@ export class LFXChangelog extends HTMLElement {
     this._containerElement.appendChild(errorEl);
 
     const retryBtn = errorEl.querySelector('.lfx-changelog-retry-btn');
-    retryBtn?.addEventListener('click', () => this._loadChangelogs());
+    this._retryHandler = () => this._loadChangelogs();
+    retryBtn?.addEventListener('click', this._retryHandler);
   }
 
   private _showEmpty(): void {
@@ -226,3 +237,10 @@ declare global {
     'lfx-changelog': LFXChangelog;
   }
 }
+
+// Explicit registration for consumers who need deferred registration
+export const defineChangelog = () => {
+  if (typeof window !== 'undefined' && !customElements.get('lfx-changelog')) {
+    customElements.define('lfx-changelog', LFXChangelog);
+  }
+};

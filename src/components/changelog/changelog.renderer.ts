@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 import DOMPurify from 'dompurify';
-import { marked } from 'marked';
+import { Marked } from 'marked';
 
 import type { ChangelogEntry } from './changelog.types';
 
-marked.setOptions({
+const _marked = new Marked({
   async: false,
   gfm: true,
   breaks: true,
@@ -25,10 +25,22 @@ function _formatDate(dateStr: string): string {
 }
 
 function _sanitizeMarkdown(md: string): string {
-  const rawHtml = marked.parse(md) as string;
-  return DOMPurify.sanitize(rawHtml, {
+  const rawHtml = _marked.parse(md) as string;
+
+  // Enforce rel="noopener noreferrer" on any link with target="_blank"
+  // to prevent reverse-tabnabbing attacks from markdown content
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if (node.tagName === 'A' && node.getAttribute('target') === '_blank') {
+      node.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  const sanitized = DOMPurify.sanitize(rawHtml, {
     ADD_ATTR: ['target', 'rel'],
   });
+
+  DOMPurify.removeHook('afterSanitizeAttributes');
+  return sanitized;
 }
 
 /**
@@ -124,7 +136,7 @@ export function renderLoading(): HTMLElement {
  * Render the error state with retry button
  */
 export function renderError(message: string): HTMLElement {
-  const retryBtn = _el('button', { part: 'retry', class: 'lfx-changelog-retry-btn' }, ['Retry']);
+  const retryBtn = _el('button', { type: 'button', part: 'retry', class: 'lfx-changelog-retry-btn' }, ['Retry']);
 
   return _el('div', { part: 'error', class: 'lfx-changelog-error' }, [
     _el('div', { class: 'lfx-changelog-error-icon' }, ['\u26A0']),

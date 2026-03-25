@@ -21,5 +21,16 @@ export async function fetchChangelogs(productSlug: string, limit: number, baseUr
     throw new Error(`Failed to fetch changelogs: ${response.status} ${response.statusText}`);
   }
 
-  return response.json();
+  let data: ChangelogApiResponse;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('Failed to parse changelogs response as JSON');
+  }
+
+  if (data && data.success === false) {
+    throw new Error(`Failed to fetch changelogs: ${(data as unknown as Record<string, unknown>).message ?? 'Unknown error'}`);
+  }
+
+  return data;
 }

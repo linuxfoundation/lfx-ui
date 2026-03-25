@@ -184,7 +184,6 @@ export class ChangelogComponent {
 | `--lfx-changelog-accent-bg`        | `#eff6ff`               | Accent background      |
 | `--lfx-changelog-border-radius`    | `12px`                  | Card border radius     |
 | `--lfx-changelog-card-padding`     | `20px`                  | Card padding           |
-| `--lfx-changelog-card-gap`         | `16px`                  | Gap between cards      |
 
 ### Theme Examples
 
@@ -272,7 +271,7 @@ The component references global `--lfx-*` tokens as fallbacks, so it integrates 
 - **High Contrast Support**: Automatic styles for `prefers-contrast: high`
 - **Reduced Motion**: Respects `prefers-reduced-motion` — disables animations
 - **Semantic HTML**: Uses `<article>`, `<time>`, `<h2>`, `<h3>` elements
-- **External Links**: All links include `rel="noopener noreferrer"` and `target="_blank"`
+- **External Links**: Card and footer links include `rel="noopener noreferrer"` and `target="_blank"`. Markdown links with `target="_blank"` are automatically enforced with safe `rel` attributes
 
 ## Responsive Design
 
