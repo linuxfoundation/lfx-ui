@@ -27,6 +27,7 @@ npm install @linuxfoundation/lfx-ui-core
   - [Prettier Configuration](docs/prettier-config.md)
 - Components
   - [Components Overview](docs/components.md)
+  - [Changelog Component](docs/changelog.md)
   - [Footer Component](docs/footer.md)
   - [Tools Component](docs/tools.md)
 
