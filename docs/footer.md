@@ -112,7 +112,7 @@ footer.addEventListener('cookie-script-error', (event) => {
 
 ```typescript
 // In your component template
-<lfx-footer 
+<lfx-footer
   [attr.cookie-tracking]="enableCookieTracking"
   [attr.cookie-variant]="cookieVariant">
 </lfx-footer>
@@ -128,9 +128,7 @@ export class AppComponent {
 
 ```vue
 <template>
-  <lfx-footer 
-    :cookie-tracking="enableCookieTracking" 
-    :cookie-variant="cookieVariant" />
+  <lfx-footer :cookie-tracking="enableCookieTracking" :cookie-variant="cookieVariant" />
 </template>
 
 <script>
@@ -152,31 +150,28 @@ function App() {
   const [enableCookieTracking, setEnableCookieTracking] = useState(true);
   const [cookieVariant, setCookieVariant] = useState('two'); // Optional
 
-  return (
-    <lfx-footer 
-      cookie-tracking={enableCookieTracking} 
-      cookie-variant={cookieVariant} 
-    />
-  );
+  return <lfx-footer cookie-tracking={enableCookieTracking} cookie-variant={cookieVariant} />;
 }
 ```
 
 ## Attributes
 
-| Attribute         | Type    | Description                                | Default |
-| ----------------- | ------- | ------------------------------------------ | ------- |
-| `cookie-tracking` | boolean | Enable Osano cookie consent script loading | `false` |
+| Attribute         | Type    | Description                                                        | Default     |
+| ----------------- | ------- | ------------------------------------------------------------------ | ----------- |
+| `cookie-tracking` | boolean | Enable Osano cookie consent script loading                         | `false`     |
 | `cookie-variant`  | string  | Optional variant parameter for Osano script (e.g., "two", "three") | `undefined` |
 
 **Attribute Behavior:**
 
 **Cookie Tracking (Boolean):**
+
 - `cookie-tracking` (no value) = enabled
 - `cookie-tracking="true"` = enabled
 - `cookie-tracking="false"` = disabled
 - No attribute = disabled
 
 **Cookie Variant (String):**
+
 - `cookie-variant="two"` = loads script with `?variant=two`
 - `cookie-variant="three"` = loads script with `?variant=three`
 - No attribute = loads base script without variant parameter

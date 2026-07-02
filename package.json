@@ -15,7 +15,7 @@
     "build:browser": "ts-node src/scripts/build-browser.ts",
     "build": "npm run build:tokens && npm run format && tsc && npm run build:browser",
     "prepare": "npm run build",
-    "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\" \"*.md\" \"docs/**/*.md\"",
     "start": "npm run storybook",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

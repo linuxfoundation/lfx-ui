@@ -1,0 +1,13 @@
+# Build output
+dist/
+storybook-static/
+
+# Dependencies
+node_modules/
+
+# Generated design tokens
+src/design/tokens/generated/
+
+# Misc
+*.min.js
+coverage/
