@@ -47,13 +47,13 @@ git clone https://github.com/linuxfoundation/lfx-ui
 cd lfx-ui-core
 ```
 
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm ci
 ```
 
-3. Build the tokens and components:
+1. Build the tokens and components:
 
 ```bash
 npm run build
@@ -78,7 +78,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-2. The GitHub Action will automatically:
+1. The GitHub Action will automatically:
    - Build the package
    - Update the version
    - Publish to npm
