@@ -123,6 +123,20 @@ Always run after changes:
 npm run format
 ```
 
+**Before pushing a pull request**, run the full lint check and ensure it
+passes with no errors:
+
+```bash
+npm run lint        # check markdown lint + prettier formatting (non-mutating)
+npm run lint:fix    # auto-fix markdown lint issues, then format
+```
+
+- `npm run lint` is the CI gate — it must pass before opening or updating a PR.
+- `npm run lint:fix` applies markdownlint `--fix` then Prettier; use it locally
+  to resolve issues automatically.
+- Markdown-only variants: `npm run lint:md` / `npm run lint:md:fix`.
+- Prettier-only check: `npm run format:check`.
+
 ### Component Testing Checklist
 
 - Custom element registration
@@ -140,6 +154,7 @@ npm run format
 - Use conventional commit format
 - Don't add Claude as co-author
 - No auto-generated commit messages
+- Run `npm run lint` and ensure it passes before pushing a pull request
 
 ## Important Notes
 
