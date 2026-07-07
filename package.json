@@ -40,7 +40,7 @@
     "@types/prettier": "3.0.0",
     "browserify": "^17.0.0",
     "lit": "^3.2.1",
-    "markdownlint-cli2": "0.23.0",
+    "markdownlint-cli2": "0.22.1",
     "prettier": "3.4.1",
     "storybook": "^8.4.5",
     "ts-node": "^10.9.1",

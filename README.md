@@ -42,22 +42,22 @@ npm install @linuxfoundation/lfx-ui-core
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/linuxfoundation/lfx-ui
-cd lfx-ui-core
-```
+   ```bash
+   git clone https://github.com/linuxfoundation/lfx-ui
+   cd lfx-ui-core
+   ```
 
-1. Install dependencies:
+2. Install dependencies:
 
-```bash
-npm ci
-```
+   ```bash
+   npm ci
+   ```
 
-1. Build the tokens and components:
+3. Build the tokens and components:
 
-```bash
-npm run build
-```
+   ```bash
+   npm run build
+   ```
 
 ### Making Changes
 
@@ -73,12 +73,12 @@ npm run build
 
 1. Create a new version tag following semver conventions:
 
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
 
-1. The GitHub Action will automatically:
+2. The GitHub Action will automatically:
    - Build the package
    - Update the version
    - Publish to npm
