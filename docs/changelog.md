@@ -70,12 +70,12 @@ Then, use the component in your HTML:
 
 ## Attributes
 
-| Attribute  | Type   | Required | Default                       | Description                       |
-| ---------- | ------ | -------- | ----------------------------- | --------------------------------- |
-| `product`  | string | Yes      | —                             | Product slug (see table below)    |
-| `theme`    | string | No       | `"light"`                     | `"light"` or `"dark"`             |
-| `limit`    | number | No       | `10`                          | Number of entries to show (max 25)|
-| `base-url` | string | No       | `"https://changelog.lfx.dev"` | Override the API base URL         |
+| Attribute  | Type   | Required | Default                       | Description                        |
+| ---------- | ------ | -------- | ----------------------------- | ---------------------------------- |
+| `product`  | string | Yes      | —                             | Product slug (see table below)     |
+| `theme`    | string | No       | `"light"`                     | `"light"` or `"dark"`              |
+| `limit`    | number | No       | `10`                          | Number of entries to show (max 25) |
+| `base-url` | string | No       | `"https://changelog.lfx.dev"` | Override the API base URL          |
 
 ### Available Product Slugs
 
@@ -137,11 +137,7 @@ changelog.addEventListener('changelog-load-error', (event) => {
 @Component({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
-    <lfx-changelog
-      [attr.product]="productSlug"
-      [attr.theme]="isDark ? 'dark' : 'light'"
-      [attr.limit]="entryLimit"
-      [attr.base-url]="changelogApiUrl">
+    <lfx-changelog [attr.product]="productSlug" [attr.theme]="isDark ? 'dark' : 'light'" [attr.limit]="entryLimit" [attr.base-url]="changelogApiUrl">
     </lfx-changelog>
   `,
 })
@@ -157,11 +153,7 @@ export class ChangelogComponent {
 
 ```vue
 <template>
-  <lfx-changelog
-    :product="productSlug"
-    :theme="isDark ? 'dark' : 'light'"
-    :limit="entryLimit"
-    :base-url="changelogApiUrl" />
+  <lfx-changelog :product="productSlug" :theme="isDark ? 'dark' : 'light'" :limit="entryLimit" :base-url="changelogApiUrl" />
 </template>
 ```
 
@@ -169,21 +161,21 @@ export class ChangelogComponent {
 
 ### CSS Custom Properties
 
-| Property                            | Default (light)         | Description            |
-| ----------------------------------- | ----------------------- | ---------------------- |
-| `--lfx-changelog-font-family`      | `system-ui, sans-serif` | Font family            |
-| `--lfx-changelog-font-size-base`   | `14px`                  | Base font size         |
-| `--lfx-changelog-text-primary`     | `#1a1a2e`               | Primary text color     |
-| `--lfx-changelog-text-secondary`   | `#64748b`               | Secondary text color   |
-| `--lfx-changelog-text-muted`       | `#94a3b8`               | Muted text color       |
-| `--lfx-changelog-text-link`        | `#3b82f6`               | Link color             |
-| `--lfx-changelog-bg-surface`       | `#ffffff`               | Background color       |
-| `--lfx-changelog-bg-surface-alt`   | `#f8fafc`               | Alternate background   |
-| `--lfx-changelog-border-color`     | `#e2e8f0`               | Border color           |
-| `--lfx-changelog-accent`           | `#3b82f6`               | Accent color           |
-| `--lfx-changelog-accent-bg`        | `#eff6ff`               | Accent background      |
-| `--lfx-changelog-border-radius`    | `12px`                  | Card border radius     |
-| `--lfx-changelog-card-padding`     | `20px`                  | Card padding           |
+| Property                         | Default (light)         | Description          |
+| -------------------------------- | ----------------------- | -------------------- |
+| `--lfx-changelog-font-family`    | `system-ui, sans-serif` | Font family          |
+| `--lfx-changelog-font-size-base` | `14px`                  | Base font size       |
+| `--lfx-changelog-text-primary`   | `#1a1a2e`               | Primary text color   |
+| `--lfx-changelog-text-secondary` | `#64748b`               | Secondary text color |
+| `--lfx-changelog-text-muted`     | `#94a3b8`               | Muted text color     |
+| `--lfx-changelog-text-link`      | `#3b82f6`               | Link color           |
+| `--lfx-changelog-bg-surface`     | `#ffffff`               | Background color     |
+| `--lfx-changelog-bg-surface-alt` | `#f8fafc`               | Alternate background |
+| `--lfx-changelog-border-color`   | `#e2e8f0`               | Border color         |
+| `--lfx-changelog-accent`         | `#3b82f6`               | Accent color         |
+| `--lfx-changelog-accent-bg`      | `#eff6ff`               | Accent background    |
+| `--lfx-changelog-border-radius`  | `12px`                  | Card border radius   |
+| `--lfx-changelog-card-padding`   | `20px`                  | Card padding         |
 
 ### Theme Examples
 
