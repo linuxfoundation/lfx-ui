@@ -8,7 +8,7 @@ import { style } from './footer.style';
 declare global {
   interface Window {
     transcend?: {
-      showConsentManager?: () => void;
+      showConsentManager?: (options?: { viewState?: string }) => void;
     };
   }
 }
@@ -109,9 +109,10 @@ export class LFXFooter extends HTMLElement {
   private _handleCookiePreferencesClick(event: Event): void {
     event.preventDefault();
 
-    // Show the Transcend consent manager
+    // Show the Transcend consent manager, opening directly to the consent options
+    // (rather than the initial banner) since this is a deliberate button click
     if (typeof window !== 'undefined' && window.transcend?.showConsentManager) {
-      window.transcend.showConsentManager();
+      window.transcend.showConsentManager({ viewState: 'CompleteOptions' });
     } else {
       console.warn('LFXFooter: Transcend consent manager not available for showing cookie preferences');
     }
