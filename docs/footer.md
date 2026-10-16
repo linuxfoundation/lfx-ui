@@ -56,7 +56,7 @@ Example: [https://stackblitz.com/edit/vitejs-vite-vn2ysk?file=index.html](https:
 
 ### Cookie Consent Integration
 
-The footer component can automatically load the Osano cookie consent script when the `cookie-tracking` attribute is present. You can also specify a custom variant using the `cookie-variant` attribute:
+The footer component can automatically load the Transcend cookie consent script (`airgap.js`) when the `cookie-tracking` attribute is present:
 
 ```html
 <!-- Enable cookie tracking (boolean attribute pattern) -->
@@ -64,12 +64,6 @@ The footer component can automatically load the Osano cookie consent script when
 
 <!-- Enable cookie tracking (explicit true) -->
 <lfx-footer cookie-tracking="true"></lfx-footer>
-
-<!-- Enable cookie tracking with specific variant -->
-<lfx-footer cookie-tracking cookie-variant="two"></lfx-footer>
-
-<!-- Enable cookie tracking with different variant -->
-<lfx-footer cookie-tracking="true" cookie-variant="three"></lfx-footer>
 
 <!-- Disable cookie tracking (explicit false) -->
 <lfx-footer cookie-tracking="false"></lfx-footer>
@@ -81,10 +75,8 @@ The footer component can automatically load the Osano cookie consent script when
 **Important Notes:**
 
 - The script will only be loaded once, even if multiple footer components have cookie tracking enabled
-- The `cookie-variant` attribute is optional - when not provided, uses the base Osano script URL without any variant parameter
-- When `cookie-variant` is specified, it appends `?variant=<value>` to the Osano script URL
 - The script is loaded asynchronously for better performance
-- The component automatically handles script deduplication and cleans up existing scripts when variant changes
+- The component automatically handles script deduplication
 - Works in both browser and server-side rendering environments
 - Includes error handling for script loading failures
 
@@ -112,15 +104,11 @@ footer.addEventListener('cookie-script-error', (event) => {
 
 ```typescript
 // In your component template
-<lfx-footer
-  [attr.cookie-tracking]="enableCookieTracking"
-  [attr.cookie-variant]="cookieVariant">
-</lfx-footer>
+<lfx-footer [attr.cookie-tracking]="enableCookieTracking"></lfx-footer>
 
 // In your component class
 export class AppComponent {
   enableCookieTracking = true;
-  cookieVariant = 'two'; // Optional
 }
 ```
 
@@ -128,7 +116,7 @@ export class AppComponent {
 
 ```vue
 <template>
-  <lfx-footer :cookie-tracking="enableCookieTracking" :cookie-variant="cookieVariant" />
+  <lfx-footer :cookie-tracking="enableCookieTracking" />
 </template>
 
 <script>
@@ -136,7 +124,6 @@ export default {
   data() {
     return {
       enableCookieTracking: true,
-      cookieVariant: 'two', // Optional
     };
   },
 };
@@ -148,18 +135,16 @@ export default {
 ```jsx
 function App() {
   const [enableCookieTracking, setEnableCookieTracking] = useState(true);
-  const [cookieVariant, setCookieVariant] = useState('two'); // Optional
 
-  return <lfx-footer cookie-tracking={enableCookieTracking} cookie-variant={cookieVariant} />;
+  return <lfx-footer cookie-tracking={enableCookieTracking} />;
 }
 ```
 
 ## Attributes
 
-| Attribute         | Type    | Description                                                        | Default     |
-| ----------------- | ------- | ------------------------------------------------------------------ | ----------- |
-| `cookie-tracking` | boolean | Enable Osano cookie consent script loading                         | `false`     |
-| `cookie-variant`  | string  | Optional variant parameter for Osano script (e.g., "two", "three") | `undefined` |
+| Attribute         | Type    | Description                                    | Default |
+| ----------------- | ------- | ---------------------------------------------- | ------- |
+| `cookie-tracking` | boolean | Enable Transcend cookie consent script loading | `false` |
 
 **Attribute Behavior:**
 
@@ -169,29 +154,6 @@ function App() {
 - `cookie-tracking="true"` = enabled
 - `cookie-tracking="false"` = disabled
 - No attribute = disabled
-
-**Cookie Variant (String):**
-
-- `cookie-variant="two"` = loads script with `?variant=two`
-- `cookie-variant="three"` = loads script with `?variant=three`
-- No attribute = loads base script without variant parameter
-- Only takes effect when `cookie-tracking` is enabled
-
-### Common Cookie Variant Usage Patterns
-
-```html
-<!-- Most common: Default behavior without variant -->
-<lfx-footer cookie-tracking></lfx-footer>
-
-<!-- Production: Using variant "two" -->
-<lfx-footer cookie-tracking cookie-variant="two"></lfx-footer>
-
-<!-- Testing: Using different variants -->
-<lfx-footer cookie-tracking cookie-variant="three"></lfx-footer>
-
-<!-- Dynamic variant based on environment -->
-<lfx-footer cookie-tracking cookie-variant="${process.env.OSANO_VARIANT}"></lfx-footer>
-```
 
 ## Styling and Customization
 
@@ -524,7 +486,6 @@ The Storybook includes these comprehensive examples:
 
 - **Default** - Basic footer without custom styling
 - **WithCookieTracking** - Footer with cookie consent enabled
-- **WithCookieTrackingVariant** - Footer with cookie tracking and custom variant
 - **LightTheme** - Clean light color scheme
 - **DarkTheme** - Modern dark theme
 - **HighContrast** - Accessibility-focused high contrast

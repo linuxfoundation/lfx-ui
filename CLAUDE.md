@@ -98,12 +98,11 @@ Located at `src/core/styles/stylesheet-utils.ts`:
 
 ### Cookie Consent Integration
 
-The `lfx-footer` component includes optional Osano cookie consent:
+The `lfx-footer` component includes optional Transcend cookie consent:
 
 - Activated via `cookie-tracking` attribute
-- Dynamically loads Osano script
-- Provides "Manage cookie preferences" link
-- Hides widget, uses drawer for preferences
+- Dynamically loads the Transcend `airgap.js` script
+- Provides "Manage cookie preferences" link that opens the Transcend consent manager
 
 ### External Services
 

@@ -15,7 +15,6 @@ interface FooterCSSProps {
   '--lfx-footer-font-size'?: string;
   '--lfx-footer-text-align'?: string;
   'cookie-tracking'?: boolean;
-  'cookie-variant'?: string;
   [key: string]: any;
 }
 
@@ -30,8 +29,7 @@ const meta: Meta<FooterCSSProps> = {
 A footer component that displays consistent copyright and legal information across LFX applications.
 
 ## Features
-- **Cookie Tracking**: Enable Osano cookie consent script with the \`cookie-tracking\` attribute
-- **Cookie Variant**: Specify Osano script variant with the \`cookie-variant\` attribute
+- **Cookie Tracking**: Enable the Transcend cookie consent script with the \`cookie-tracking\` attribute
 - **Customizable Styling**: Extensive CSS custom properties for theming
 - **Accessibility**: Semantic HTML with proper ARIA attributes
 - **Responsive**: Mobile-optimized design
@@ -57,12 +55,7 @@ Plus many more for advanced customization including responsive and accessibility
   argTypes: {
     'cookie-tracking': {
       control: 'boolean',
-      description: 'Enable Osano cookie consent script',
-      table: { category: 'Attributes' },
-    },
-    'cookie-variant': {
-      control: 'text',
-      description: 'Optional variant parameter for Osano script (e.g., "two", "three")',
+      description: 'Enable Transcend cookie consent script',
       table: { category: 'Attributes' },
     },
     '--lfx-footer-bg': {
@@ -108,10 +101,9 @@ Plus many more for advanced customization including responsive and accessibility
       .map(([key, value]) => `${key}: ${value}`)
       .join('; ');
 
-    const cookieVariant = args['cookie-variant'];
     return html`
       <div>
-        <lfx-footer style="${styles}" ?cookie-tracking="${args['cookie-tracking']}" cookie-variant="${cookieVariant || ''}"></lfx-footer>
+        <lfx-footer style="${styles}" ?cookie-tracking="${args['cookie-tracking']}"></lfx-footer>
       </div>
     `;
   },
@@ -135,29 +127,9 @@ export const WithCookieTracking: Story = {
       description: {
         story: `
 This story demonstrates the footer with cookie tracking enabled. When the \`cookie-tracking\` attribute is set to \`true\`,
-the component will automatically append the Osano cookie consent script to the document head.
+the component will automatically append the Transcend cookie consent script (\`airgap.js\`) to the document head.
 
 **Note**: The script will only be added once, even if multiple footer components have cookie tracking enabled.
-        `,
-      },
-    },
-  },
-};
-
-// Footer with cookie tracking and variant
-export const WithCookieTrackingVariant: Story = {
-  args: {
-    'cookie-tracking': true,
-    'cookie-variant': 'two',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: `
-This story demonstrates the footer with cookie tracking enabled and a specific variant. The \`cookie-variant\` attribute
-allows you to specify which variant of the Osano script to load (e.g., "two", "three").
-
-When no variant is specified, the base Osano script URL is used without any variant parameter.
         `,
       },
     },
