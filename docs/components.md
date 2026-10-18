@@ -38,7 +38,7 @@ A comprehensive footer component that provides consistent copyright and legal in
 
 **Key Features:**
 
-- **Cookie Consent Integration**: Optional Osano cookie consent script loading
+- **Cookie Consent Integration**: Optional Transcend cookie consent script loading
 - **Extensive Customization**: CSS custom properties for complete theming
 - **Accessibility**: Built-in accessibility features and semantic HTML
 - **Responsive Design**: Mobile-optimized with responsive breakpoints

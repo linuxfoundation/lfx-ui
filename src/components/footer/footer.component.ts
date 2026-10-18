@@ -4,14 +4,11 @@
 import { StylesheetManager } from '../../core/styles/stylesheet-utils';
 import { style } from './footer.style';
 
-// TypeScript declarations for Osano global object
+// TypeScript declarations for the Transcend airgap.js global object
 declare global {
   interface Window {
-    Osano?: {
-      cm?: {
-        hideWidget?: () => void;
-        showDrawer?: () => void;
-      };
+    transcend?: {
+      showConsentManager?: (options?: { viewState?: string }) => void;
     };
   }
 }
@@ -19,7 +16,7 @@ declare global {
 /**
  * @element lfx-footer
  * @summary A footer component for LFX applications
- * @description This component provides a consistent footer across LFX applications with optional cookie consent script integration. When cookie tracking is enabled, it includes a "Manage cookie preferences" link that opens the Osano consent management drawer. The cookie variant can be customized to load different versions of the Osano script.
+ * @description This component provides a consistent footer across LFX applications with optional cookie consent script integration. When cookie tracking is enabled, it includes a "Manage cookie preferences" link that opens the Transcend consent management drawer.
  * @csspart footer - The main footer element
  * @csspart footer-container - The main container of the footer
  * @csspart footer-content - The content wrapper of the footer
@@ -36,15 +33,14 @@ declare global {
  * @cssproperty --lfx-footer-font-size - Font size of footer text
  * @cssproperty --lfx-footer-font-family - Font family of footer text
  *
- * @attr {boolean} cookie-tracking - When true, appends the Osano cookie consent script to the document and shows the "Manage cookie preferences" link
- * @attr {string} cookie-variant - Optional variant parameter to append to the Osano script URL (e.g., "two", "three"). When not specified, uses the base Osano script URL without any variant parameter. Only takes effect when cookie-tracking is enabled.
+ * @attr {boolean} cookie-tracking - When true, appends the Transcend cookie consent script to the document and shows the "Manage cookie preferences" link
  *
  * @fires cookie-script-error - Fired when the cookie consent script fails to load
  */
 export class LFXFooter extends HTMLElement {
   private _template!: HTMLTemplateElement;
   private _rendered = false;
-  private static readonly OSANO_SCRIPT_BASE_URL = 'https://cmp.osano.com/16A0DbT9yDNIaQkvZ/d6ac078e-c71f-4b96-8c97-818cc1cc6632/osano.js';
+  private static readonly TRANSCEND_SCRIPT_URL = 'https://transcend-cdn.com/cm/f484e2d0-ad2e-43a9-9d64-d07f6fa20966/airgap.js';
 
   constructor() {
     super();
@@ -53,20 +49,12 @@ export class LFXFooter extends HTMLElement {
   }
 
   static get observedAttributes(): string[] {
-    return ['cookie-tracking', 'cookie-variant'];
+    return ['cookie-tracking'];
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (name === 'cookie-tracking' && this._rendered) {
       this._handleCookieTracking();
-    } else if (name === 'cookie-variant' && this._rendered) {
-      // If cookie tracking is already enabled, reload the script with the new variant
-      // This allows dynamic variant changes without needing to toggle cookie-tracking
-      const cookieTrackingAttr = this.getAttribute('cookie-tracking');
-      const shouldEnable = cookieTrackingAttr === 'true' || cookieTrackingAttr === '';
-      if (shouldEnable) {
-        this._handleCookieTracking();
-      }
     }
   }
 
@@ -121,11 +109,12 @@ export class LFXFooter extends HTMLElement {
   private _handleCookiePreferencesClick(event: Event): void {
     event.preventDefault();
 
-    // Show the Osano drawer
-    if (typeof window !== 'undefined' && window.Osano?.cm?.showDrawer) {
-      window.Osano.cm.showDrawer();
+    // Show the Transcend consent manager, opening directly to the consent options
+    // (rather than the initial banner) since this is a deliberate button click
+    if (typeof window !== 'undefined' && window.transcend?.showConsentManager) {
+      window.transcend.showConsentManager({ viewState: 'CompleteOptions' });
     } else {
-      console.warn('LFXFooter: Osano CMP not available for showing cookie preferences drawer');
+      console.warn('LFXFooter: Transcend consent manager not available for showing cookie preferences');
     }
   }
 
@@ -134,7 +123,7 @@ export class LFXFooter extends HTMLElement {
     const shouldEnable = cookieTrackingAttr === 'true' || cookieTrackingAttr === '';
 
     if (shouldEnable) {
-      this._appendOsanoScript();
+      this._appendTranscendScript();
       this._showCookiePreferencesLink();
     }
   }
@@ -146,81 +135,40 @@ export class LFXFooter extends HTMLElement {
     }
   }
 
-  private _appendOsanoScript(): void {
+  private _appendTranscendScript(): void {
     if (typeof document === 'undefined') {
       return;
     }
 
-    // Build the script URL with optional variant parameter
-    // If cookie-variant attribute is provided, append it as a query parameter
-    // Otherwise, use the base URL without any variant
-    const variant = this.getAttribute('cookie-variant');
-    const scriptUrl = variant ? `${LFXFooter.OSANO_SCRIPT_BASE_URL}?variant=${variant}` : LFXFooter.OSANO_SCRIPT_BASE_URL;
-
-    // Check if the exact script we want already exists
-    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
+    // Check if the script already exists
+    const existingScript = document.querySelector(`script[src="${LFXFooter.TRANSCEND_SCRIPT_URL}"]`);
     if (existingScript) {
-      return; // Script with correct variant already loaded, nothing to do
+      return;
     }
 
-    // Remove any existing Osano scripts with different URLs to prevent conflicts
-    // Only remove if they exist and have different URLs than what we want to load
-    const existingOsanoScripts = document.querySelectorAll(`script[src*="${LFXFooter.OSANO_SCRIPT_BASE_URL}"]`);
-    existingOsanoScripts.forEach((script) => script.remove());
-
-    // Add Osano initialization script first (only if it doesn't already exist)
-    const existingInitScript = document.querySelector('script[data-osano-init="true"]');
-    if (!existingInitScript) {
-      const initScript = document.createElement('script');
-      initScript.setAttribute('data-osano-init', 'true');
-      initScript.textContent = `
-(function (w, o, d) {
-    w[o] =
-        w[o] ||
-        function () {
-            w[o][d].push(arguments);
-        };
-    w[o][d] = w[o][d] || [];
-})(window, 'Osano', 'data');
-
-// Hide widget on initialization
-window.Osano('onInitialized', function(consent) {
-    // Add style to hide widget
-    const style = document.createElement('style');
-    style.textContent = '.osano-cm-widget {display: none !important;}';
-    document.head.appendChild(style);
-});
-      `;
-
-      // Append the init script to document
-      if (document.head) {
-        document.head.appendChild(initScript);
-      } else {
-        document.body?.appendChild(initScript);
-      }
-    }
-
-    // Create and append the main Osano script
+    // Create and append the Transcend airgap.js script
     const script = document.createElement('script');
-    script.src = scriptUrl;
+    script.src = LFXFooter.TRANSCEND_SCRIPT_URL;
     script.async = true;
+    script.setAttribute('data-cfasync', 'false');
+    script.setAttribute('data-prompt', 'auto');
 
     // Add error handling
     script.onerror = () => {
-      console.error('LFXFooter: Failed to load Osano cookie consent script');
+      console.error('LFXFooter: Failed to load Transcend cookie consent script');
       // Dispatch custom event for error handling
       this.dispatchEvent(
         new CustomEvent('cookie-script-error', {
           bubbles: true,
           detail: {
-            scriptSrc: scriptUrl,
+            scriptSrc: LFXFooter.TRANSCEND_SCRIPT_URL,
             error: 'Script failed to load',
           },
         })
       );
     };
 
-    // Append the main script to the document
+    // Append the script to the document
     if (document.head) {
       document.head.appendChild(script);
     } else {
